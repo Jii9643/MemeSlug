@@ -2,8 +2,8 @@
 
 int main()
 {
-	RenderWindow window(VideoMode(800, 600), "MemeSlug", Style::Default);
-	
+	RenderWindow window(VideoMode(1920, 1080), "MemeSlug", Style::Default);
+
 	Game game(&window);
 
 	//Game loop

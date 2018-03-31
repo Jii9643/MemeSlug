@@ -8,17 +8,19 @@ public:
 	Game(RenderWindow *window);
 	virtual ~Game();
 	//Accessors
-	inline RenderWindow& getwindow() 
-	{ return *this->window; }
+	inline RenderWindow& getwindow()
+	{
+		return *this->window;
+	}
 
 	//Functions
 	void Update();
 	void Draw();
 
 private:
-	RenderWindow *window;
+	RenderWindow * window;
 
-	Player *player;
+	std::vector<Player> players;
 	Texture playerTexture;
+	Texture bulletTexture;
 };
-
