@@ -13,21 +13,24 @@ Game::Game(RenderWindow *window)
 
 	//Inizializzazione del player
 	this->players.push_back(Player(&playerTexture, &bulletTexture));
-	
 
 }
 
 
 Game::~Game()
 {
-	
+
 }
 
 void Game::Update()
 {
-	for (size_t i = 0; i < players.size(); i++) 
+	for (size_t i = 0; i < players.size(); i++)
 	{
-		players[i].Update();
+		this->players[i].Update();
+		for (size_t k = 0; k < this->players[i].getBullets().size(); k++)
+		{
+			this->players[i].getBullets()[k].Update();
+		}
 	}
 
 }

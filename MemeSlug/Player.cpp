@@ -10,8 +10,12 @@ Player::Player(Texture *texture, Texture *bulletTexture, int UP, int DOWN, int L
 	this->texture = texture;
 	this->bulletTexture = bulletTexture;
 	this->sprite.setTexture(*this->texture);
-
 	this->sprite.setScale(0.3f, 0.3f);
+
+	this->shootTimerMax = 20;
+	this->shootTimer = this->shootTimerMax;
+	this->damageTimerMax = 10;
+	this->damageTimer = this->damageTimerMax;
 
 	this->controls[controls::UP] = UP;
 	this->controls[controls::DOWN] = DOWN;
@@ -40,13 +44,10 @@ void Player::Movement()
 		this->sprite.move(-10.0f, 0.0f);
 	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[controls::RIGHT] = RIGHT)))
 		this->sprite.move(10.0f, 0.0f);
-	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[controls::SHOOT])))
-	{
-		this->bullets.push_back(Bullet(bulletTexture, this->sprite.getPosition()));
-	}
-		
-	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[controls::JUMP]))){}
-		
+	
+
+	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[controls::JUMP]))) {}
+
 }
 
 void Player::Draw(RenderTarget &target)
@@ -61,13 +62,28 @@ void Player::Draw(RenderTarget &target)
 
 }
 
+void Player::Combat()
+{
+	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[controls::SHOOT])) && this->shootTimer >= this->shootTimerMax)
+	{
+		this->bullets.push_back(Bullet(bulletTexture, this->sprite.getPosition()));
+		
+		this->shootTimer = 0;
+	}
+}
+
 void Player::Update()
 {
-	this->Movement();
+	
 
-	for (size_t i = 0; i < this->bullets.size(); i++)
-	{
-		this->bullets[i].Update();
-	}
+	if (this->shootTimer < this->shootTimerMax)
+		this->shootTimer++;
+
+	if (this->damageTimer < this->damageTimerMax)
+		this->damageTimer++;
+
+
+	this->Movement();
+	this->Combat();
 
 }

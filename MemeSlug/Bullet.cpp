@@ -4,7 +4,7 @@
 
 Bullet::Bullet(Texture *texture, Vector2f position, Vector2f maxVelocity)
 {
-	
+
 	this->texture = texture;
 	this->sprite.setTexture(*this->texture);
 	this->maxVelocity = maxVelocity;
@@ -17,7 +17,7 @@ Bullet::~Bullet()
 {
 }
 
-void Bullet::Movement() 
+void Bullet::Movement()
 {
 	this->sprite.move(this->maxVelocity.x, this->maxVelocity.y);
 }
@@ -29,8 +29,7 @@ void Bullet::Update()
 }
 
 
-void Bullet::Draw(RenderTarget &target) 
+void Bullet::Draw(RenderTarget &target)
 {
 	target.draw(this->sprite);
 }
-
