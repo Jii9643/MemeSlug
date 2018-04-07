@@ -1,7 +1,7 @@
 #pragma once
 #include"Bullet.h"
 
-class Player
+class Player : public Box
 {
 public:
 
@@ -15,10 +15,10 @@ public:
 	void Movement();
 	void Combat();
 
-	
+	FloatRect playerBounds;
+
 	//Membri statici
 	static unsigned players;
-
 
 private:
 	Texture * texture;
@@ -28,7 +28,6 @@ private:
 	std::vector<Bullet> bullets;
 
 	Vector2f velocity;
-	bool canJump;
 	float jumpHeight;
 	int speed;
 	bool isJumping;

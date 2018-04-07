@@ -5,7 +5,7 @@ unsigned Player::players = 0;
 
 
 Player::Player(Texture *texture, Texture *bulletTexture)
-	: hp(1), damage(1), score(0), jumpHeight(1)
+	: hp(1), damage(1), score(0), jumpHeight(1), isJumping(false)
 {
 	//Gestione salto
 	this->jumpHeight = jumpHeight;
@@ -16,6 +16,7 @@ Player::Player(Texture *texture, Texture *bulletTexture)
 	this->sprite.setTexture(*this->texture);
 	this->sprite.setScale(0.3f, 0.3f);
 	this->sprite.setPosition(100.0f, 700.0f);
+	this->playerBounds = this->sprite.getLocalBounds();
 	faceRight = true;
 
 	//Gestione frequenza Sparo
@@ -24,12 +25,12 @@ Player::Player(Texture *texture, Texture *bulletTexture)
 	this->damageTimerMax = 10;
 	this->damageTimer = this->damageTimerMax;
 
-	
+
 	//Numero giocatori
 	this->playerNr = Player::players;
 	Player::players++;
 
-   
+
 
 }
 
@@ -52,24 +53,25 @@ void Player::Movement()
 		this->sprite.move(10.0f, 0.0f);
 	}
 
-	if (Keyboard::isKeyPressed(Keyboard::Space) && canJump)
+	if (Keyboard::isKeyPressed(Keyboard::Up) && isJumping == false)
 	{
-		
-		canJump = false;
+        isJumping = true;
 		this->sprite.move(0.0f, -sqrt(2.0f *981.0f*jumpHeight));
 		this->sprite.move(0.0f, gravitySpeed);
 	}
-	
-	
-	if (sprite.getPosition().y < ground )
+
+
+	if (this->sprite.getPosition().y < ground )
 	{
-		timeInAir = 0.0f;
 		this->sprite.move(0.0f, gravitySpeed);
 	}
-	canJump = true;
-	
+	isJumping = false;
+
+
+
 
 }
+
 
 void Player::Draw(RenderTarget &target)
 {
@@ -95,8 +97,8 @@ void Player::Combat()
 
 void Player::Update()
 {
-	
 
+	
 	if (this->shootTimer < this->shootTimerMax)
 		this->shootTimer++;
 
@@ -106,5 +108,6 @@ void Player::Update()
 
 	this->Movement();
 	this->Combat();
+
 
 }

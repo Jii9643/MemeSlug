@@ -1,11 +1,6 @@
-#pragma once
-#include <SFML/Graphics.hpp>
-#include <SFML/Audio.hpp>
-#include <SFML\System.hpp>
-#include <iostream>
-#include <vector>
+#include "Box.h"
 
-using namespace sf;
+
 
 class Bullet
 {

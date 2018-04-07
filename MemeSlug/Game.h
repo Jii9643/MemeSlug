@@ -21,6 +21,8 @@ private:
 	RenderWindow * window;
 
 	std::vector<Player> players;
+	std::vector<Box> boxes;
 	Texture playerTexture;
 	Texture bulletTexture;
+	Texture boxTexture;
 };
