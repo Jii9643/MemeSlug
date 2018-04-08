@@ -9,6 +9,7 @@ public:
 	virtual ~Player();
 
 	inline std::vector<Bullet>& getBullets() { return this->bullets; }
+	inline const Vector2f& getPosition() const { return this->sprite.getPosition(); }
 
 	void Draw(RenderTarget &target);
 	void Update();
@@ -26,14 +27,17 @@ private:
 	RectangleShape hitBox;
 	Texture * bulletTexture;
 	std::vector<Bullet> bullets;
-
-	Vector2f velocity;
+	Vector2f playerCenter;
+	Vector2f direction;
+	Vector2f currentVelocity;
+	float maxVelocity;
+	float acceleration;
 	float jumpHeight;
 	int speed;
 	bool isJumping;
 
 	const float ground = 700.0f;
-	const float gravitySpeed = 10.0;
+	const float gravitySpeed = 15.0;
 
 	bool faceRight;
 	unsigned playerNr;
