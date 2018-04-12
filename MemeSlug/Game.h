@@ -8,20 +8,24 @@ public:
 
 	Game(RenderWindow *window);
 	virtual ~Game();
-	//Accessors
+	
+	//Accessore alla window
 	inline RenderWindow& getwindow()
 	{
 		return *this->window;
 	}
 
-	//Functions
+	//Funzioni 
 	void Update();
 	void Draw();
+
+	//Funzioni per l'interfaccia utente (ancora non implementate)
 	void UpdateUI();
 	void InitUI();
 	void DrawUI();
 
 private:
+
 	RenderWindow * window;
 
 	//Text
@@ -33,7 +37,6 @@ private:
 	std::vector<Box> boxes;
 
 	//Textures
-	Texture playerTexture;
-	Texture bulletTexture;
+	std::vector<Texture> textures;
 	Texture boxTexture;
 };

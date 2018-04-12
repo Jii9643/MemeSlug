@@ -2,9 +2,10 @@
 
 
 
-Bullet::Bullet(Texture *texture, Vector2f position, float maxVelocity, Vector2f direction, float initialVelocity, float acceleration)
+Bullet::Bullet(Texture *texture, Vector2f position, Vector2f scale,
+	float maxVelocity, Vector2f direction, float initialVelocity, float acceleration)
 {
-
+	//Inizializzazione del bullet.
 	this->texture = texture;
 	this->sprite.setTexture(*this->texture);
 	this->maxVelocity = maxVelocity;
@@ -14,10 +15,10 @@ Bullet::Bullet(Texture *texture, Vector2f position, float maxVelocity, Vector2f 
 		initialVelocity * this->direction.x,
 		initialVelocity * this->direction.y);
 
-	this->sprite.setScale(0.04f, 0.04f);
+	this->sprite.setScale(scale);
 	this->sprite.setPosition(Vector2f(
 		position.x - this->sprite.getGlobalBounds().width / 2 + 43.f , 
-		position.y - this->sprite.getGlobalBounds().height / 2 - 65.f));
+		position.y - this->sprite.getGlobalBounds().height / 2 - 20.f));
 }
 
 
@@ -25,6 +26,7 @@ Bullet::~Bullet()
 {
 }
 
+//Traiettoria del proiettile. 
 void Bullet::Movement()
 {
 	if (this->acceleration > 0.0f)

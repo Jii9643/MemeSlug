@@ -7,24 +7,24 @@
 
 using namespace sf;
 
-class Box 
+class Box
 {
 public:
 	Box();
 	Box(Texture* texture);
 	~Box();
 	void Draw(RenderTarget& target);
-    void Update();
+	void Update();
 
 	FloatRect boxBounds;
-    static unsigned boxes;
-	
+	static unsigned boxes;
 
-private: 
-	
+
+private:
+
 	RectangleShape box;
 	Texture* texture;
 	Sprite sprite;
-	
+
 };
 

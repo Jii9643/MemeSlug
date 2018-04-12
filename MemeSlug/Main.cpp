@@ -20,13 +20,8 @@ int main()
 				window.close();
 
 		}
-
-
-		game.Update();
+        game.Update();
 		game.Draw();
-
-		
-
 	}
 
 	return 0;

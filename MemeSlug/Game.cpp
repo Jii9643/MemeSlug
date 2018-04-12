@@ -1,26 +1,34 @@
 #include "Game.h"
 
-
+enum textures { player = 0, bullet1, missile};
 
 Game::Game(RenderWindow *window)
 {
+	//Inizializzazione del gioco
 	this->window = window;
 	this->window->setFramerateLimit(60);
+	
 	//Inizializzazione delle textures
-	this->playerTexture.loadFromFile("Textures/Soldier.png");
-	this->bulletTexture.loadFromFile("Textures/bullet1.png");
-	this->boxTexture.loadFromFile("Textures/Box.png");
+	this->textures.push_back(Texture());
+	this->textures[player].loadFromFile("Textures/soldierMSR.png");
+	this->textures.push_back(Texture());
+	this->textures[bullet1].loadFromFile("Textures/bullet1.png");
+	this->textures.push_back(Texture());
+	this->textures[missile].loadFromFile("Textures/missile.png");
+	this->textures.push_back(Texture());
 
-	this->font.loadFromFile("Fonts/");
+	//Inizializzazione dei fonts (UI ancora da implementare)
+	this->font.loadFromFile("Fonts/"); 
 
-	//Inizializzazione del player
-	this->players.push_back(Player(&playerTexture, &bulletTexture));
-	this->boxes.push_back(Box(&boxTexture));
+	//Creazione del player
+	this->players.push_back(Player(this->textures));
+
+	//Creazione delle box (da implementare)
+	
+	//////////
 
 	this->InitUI();
 	
-
-
 }
 
 
@@ -29,6 +37,7 @@ Game::~Game()
 
 }
 
+//Ancora da completare
 void Game:: InitUI()
 {
 	Text tempText;
@@ -64,13 +73,15 @@ void Game::DrawUI()
 
 
 
-
+//Update del game, si occupa di aggiornare le posizioni di players e bullets.
 void Game::Update()
 {
+	/*da sistemare
 	for (size_t l = 0; l < this->boxes.size(); l++)
 	{
 		boxes[l].Box::Update();
     }
+	*/
 	for (size_t i = 0; i < players.size(); i++)
 	{
 		this->players[i].Player::Update();
@@ -81,6 +92,8 @@ void Game::Update()
 	}
 	this->UpdateUI();
 }
+
+//Disegnare a schermo players, boxes e bullets. 
 void Game::Draw()
 {
 	this->window->clear();
@@ -89,11 +102,12 @@ void Game::Draw()
 	{
 		this->players[i].Player::Draw(*this->window);
 	}
+	/*da sistemare
 	for (size_t j = 0; j < this->boxes.size(); j++)
 	{
 		this->boxes[j].Box::Draw(*this->window);
 	}
-
+	*/
 	this->DrawUI();
 
 	this->window->display();

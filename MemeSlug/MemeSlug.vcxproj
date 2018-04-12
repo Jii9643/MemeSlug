@@ -12,7 +12,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{3898DDA6-81CD-4087-8C00-6C37E08EC75A}</ProjectGuid>
+    <ProjectGuid>{9919F263-47D1-4E27-9AD9-5ADD6C25ADCE}</ProjectGuid>
     <RootNamespace>MemeSlug</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
