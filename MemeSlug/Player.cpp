@@ -174,8 +174,8 @@ void Player::Combat()
 			if (this->currentWeapon == BULLET1)
 			{
 				//crea i proiettili
-				this->bullets.push_back(Bullet(bulletTexture, Vector2f(this->playerCenter.x -360,this->playerCenter.y),
-					Vector2f(0.3f, 0.3f),
+				this->bullets.push_back(Bullet(bulletTexture, Vector2f(this->playerCenter.x -80,this->playerCenter.y),
+					Vector2f(-0.3f, 0.3f),
 					30.0f, Vector2f(-1.0f, 0.0f), 1.0f, 2.0f));
 				
 			}
