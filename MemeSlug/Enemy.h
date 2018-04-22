@@ -18,7 +18,7 @@ public:
 
 	//Funzioni 
 	void takeDamage(int damage);
-	void Update();
+	void Update(const float &dt);
 	void Draw(RenderTarget &target);
 
 private: 
@@ -26,6 +26,8 @@ private:
 	Sprite sprite; 
 	Vector2u windowBounds;
 	Vector2f direction;
+
+	float dtMultiplier;
 
 	int type; 
 	int hp; 

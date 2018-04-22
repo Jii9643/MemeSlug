@@ -16,7 +16,7 @@ public:
 	}
 
 	//Funzioni 
-	void Update();
+	void Update(const float &dt);
 	void Draw();
 
 	//Funzioni per l'interfaccia utente (ancora non implementate)
@@ -28,6 +28,7 @@ private:
 
 	RenderWindow * window;
 	bool runGame;
+	float dtMultiplier;
 
 	//Text
 	Font font;
@@ -44,8 +45,8 @@ private:
 	//Enemies
 	std::vector<Enemy> enemies;
 	std::vector<Enemy> enemiesSaved;
-	int enemySpawnTimer;
-	int enemySpawnTimerMax;
+	float enemySpawnTimer;
+	float enemySpawnTimerMax;
 
 	//Textures
 	std::vector<Texture> textures;

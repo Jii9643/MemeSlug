@@ -6,6 +6,8 @@ class Player
 
 public:
 
+	float dtMultiplier;
+
 	Player(std::vector<Texture> &textures);
 	virtual ~Player();
 
@@ -24,9 +26,9 @@ public:
 
 	//Funzioni 
 	void Draw(RenderTarget &target);
-	void Update();
-	void Movement();
-	void Combat();
+	void Update(Vector2u windowBounds, const float &dt);
+	void Movement(const float &dt);
+	void Combat(const float &dt);
 
 	FloatRect playerBounds;
 
@@ -43,7 +45,8 @@ private:
 	Vector2f currentVelocity;
 
 	bool faceRight;
-	
+
+
     float maxVelocity;
 	float acceleration;
 	float jumpHeight;
@@ -62,13 +65,13 @@ private:
 	const float gravitySpeed = 5.0;
 
 	//Timing riguardante il rate dei bullets.
-	int shootTimer;
-	int shootTimerMax;
-	int damageTimer;
-	int damageTimerMax;
+	float shootTimer;
+	float shootTimerMax;
+	float damageTimer;
+	float damageTimerMax;
 
-	int jumpTimer; 
-	int jumpTimerMax;
+	float jumpTimer; 
+	float jumpTimerMax;
 
 	//UI interface (ancora da implementare).
 	int score;

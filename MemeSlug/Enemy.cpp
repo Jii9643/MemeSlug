@@ -11,6 +11,8 @@ Enemy::Enemy(Texture *texture, Vector2u windowBounds, Vector2f position, Vector2
 	this->sprite.setPosition(position);
 	this->direction = direction;
 
+	this->dtMultiplier = 60.0f;
+
 	this->type = type;
 
 	this->hpMax = hpMax; 
@@ -33,12 +35,12 @@ void Enemy::takeDamage(int damage)
 		this->hp = 0;
 }
 
-void Enemy::Update()
+void Enemy::Update(const float &dt)
 {
 	switch (this->type)
 	{
 	case 0: 
-		this->sprite.move(this->direction.x *10.f, this->direction.y *10.f);
+		this->sprite.move(this->direction.x *10.f*dt*this->dtMultiplier, this->direction.y *10.f*dt*this->dtMultiplier);
 		
 		break; 
 

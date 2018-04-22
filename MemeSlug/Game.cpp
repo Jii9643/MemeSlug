@@ -7,6 +7,7 @@ Game::Game(RenderWindow *window)
 	//Inizializzazione del gioco
 	this->window = window;
 	this->window->setFramerateLimit(60);
+	this->dtMultiplier = 60.0f;
 	this->runGame = true;
 
 	//Inizializzazione delle textures
@@ -107,7 +108,7 @@ void Game::DrawUI()
 
 
 //Update del game, si occupa di aggiornare le posizioni di players e bullets.
-void Game::Update()
+void Game::Update(const float &dt)
 {
 	if (this->players.size() > 0)
 	{
@@ -120,7 +121,7 @@ void Game::Update()
 
 		//Update timers
 		if (this->enemySpawnTimer < this->enemySpawnTimerMax)
-			this->enemySpawnTimer++;
+			this->enemySpawnTimer += 1.f* dt * this->dtMultiplier;
 
 		//Enemies spawn
 		if (this->enemySpawnTimer >= this->enemySpawnTimerMax)
@@ -138,13 +139,13 @@ void Game::Update()
 			if (this->players[i].isAlive())
 			{
 				//Update player.
-				this->players[i].Player::Update();
+				this->players[i].Player::Update(this->window->getSize(), dt);
 
 
 				//Update Bullets
 				for (size_t k = 0; k < this->players[i].getBullets().size(); k++)
 				{
-					this->players[i].getBullets()[k].Bullet::Update();
+					this->players[i].getBullets()[k].Bullet::Update(dt);
 
 					//Collisione tra bullet e enemies. 
 					for (size_t j = 0; j < this->enemies.size(); j++)
@@ -180,7 +181,7 @@ void Game::Update()
 			//Update enemies.
 			for (size_t i = 0; i < this->enemies.size(); i++)
 			{
-				this->enemies[i].Update();
+				this->enemies[i].Update(dt);
 
 				//Gestione collisione tra player e enemies.
 				for (size_t k = 0; k < this->players.size(); k++)

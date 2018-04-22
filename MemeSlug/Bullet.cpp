@@ -15,6 +15,8 @@ Bullet::Bullet(Texture *texture, Vector2f position, Vector2f scale,
 		initialVelocity * this->direction.x,
 		initialVelocity * this->direction.y);
 
+	this->dtMultiplier = 60.f;
+
 	this->sprite.setScale(scale);
 	this->sprite.setPosition(Vector2f(
 		position.x - this->sprite.getGlobalBounds().width / 2 + 43.f , 
@@ -27,15 +29,15 @@ Bullet::~Bullet()
 }
 
 //Traiettoria del proiettile. 
-void Bullet::Movement()
+void Bullet::Movement(const float &dt)
 {
 	if (this->acceleration > 0.0f)
 	{
 		if (this->currentVelocity.x < this->maxVelocity)
-			this->currentVelocity.x += this->acceleration * this->direction.x;
+			this->currentVelocity.x += this->acceleration * this->direction.x*dt*this->dtMultiplier;
 
 		if (this->currentVelocity.y < this->maxVelocity)
-			this->currentVelocity.y += this->acceleration * this->direction.y;
+			this->currentVelocity.y += this->acceleration * this->direction.y*dt*this->dtMultiplier;
 	}
 	else 
 	{
@@ -43,13 +45,13 @@ void Bullet::Movement()
 			this->maxVelocity * this->direction.x, 
 			this->maxVelocity * this->direction.y);
 	}
-	this->sprite.move(this->currentVelocity);
+	this->sprite.move(this->currentVelocity*dt*this->dtMultiplier);
 }
 
 
-void Bullet::Update()
+void Bullet::Update(const float &dt)
 {
-	this->Movement();
+	this->Movement(dt);
 }
 
 
