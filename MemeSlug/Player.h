@@ -1,7 +1,7 @@
 #pragma once
 #include"Bullet.h"
 
-class Player 
+class Player
 {
 
 public:
@@ -14,6 +14,13 @@ public:
 
 	//Funzione inline, riferimento a posizione di player.
 	inline const Vector2f& getPosition() const { return this->sprite.getPosition(); }
+	inline const int getDamage() const { return this->damage; }
+	inline FloatRect getGlobalBounds() const { return this->sprite.getGlobalBounds(); }
+	inline const int& getHp() const { return this->hp; }
+	inline const int& getHpMax() const { return this->hpMax; }
+	inline void takeDamage(int damage) { this->hp -= damage; }
+	inline bool isAlive() const {return this->hp > 0;}
+
 
 	//Funzioni 
 	void Draw(RenderTarget &target);
@@ -51,8 +58,6 @@ private:
 	Texture *missileTexture;
 	std::vector<Bullet> bullets;
 	
-	
-
 	//Attributi mappa. (temporanei)
     const float ground = 700.0f;
 	const float gravitySpeed = 15.0;
@@ -66,6 +71,7 @@ private:
 	//UI interface (ancora da implementare).
 	int score;
 	int hp;
+	int hpMax;
 	int damage;
 
 	//Membro che indica l'arma corrente.

@@ -7,17 +7,18 @@ enum weapons{BULLET1 = 0, MISSILE};
 
 
 Player::Player(std::vector<Texture> &textures)
-	: hp(1), damage(1), score(0), jumpHeight(1), isJumping(false)
+	: hpMax(5), damage(1), score(0), jumpHeight(1), isJumping(false)
 {
-	this->isJumping == false;
+	this->isJumping = false;
 	this->jumpHeight = jumpHeight;
 	this->faceRight = true;
 
 	//Inizializzazione texture del player.
     this->sprite.setTexture(textures[0]);
-	this->sprite.setScale(0.3f, 0.3f);
+	this->sprite.setScale(0.119f, 0.119f);
 	this->sprite.setPosition(100.0f, 700.0f);
 	this->playerBounds = this->sprite.getLocalBounds();
+	this->hp = this->hpMax;
 
 	//Inizializzazione delle textures dei bullets.
 	this->bulletTexture = &textures[1];
@@ -62,7 +63,7 @@ void Player::Movement()
 		this->direction.x = -1.0f;
 		this->direction.y = 0.0f;
 		//Per fare il flip della sprite.
-		this->sprite.setScale(-0.3f, 0.3f);
+		this->sprite.setScale(-0.119f, 0.119f);
 
 
 		if (this->currentVelocity.x > -this->maxVelocity && this->direction.x < 0)
@@ -73,7 +74,7 @@ void Player::Movement()
 		faceRight = true;
 		this->direction.x = 1.0f;
 		this->direction.y = 0.0f;
-		this->sprite.setScale(0.3f, 0.3f);
+		this->sprite.setScale(0.119f, 0.119f);
 
 		if (this->currentVelocity.x < this->maxVelocity && this->direction.x > 0)
 			this->currentVelocity.x += this->direction.x * this->acceleration;

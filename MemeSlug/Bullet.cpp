@@ -18,7 +18,7 @@ Bullet::Bullet(Texture *texture, Vector2f position, Vector2f scale,
 	this->sprite.setScale(scale);
 	this->sprite.setPosition(Vector2f(
 		position.x - this->sprite.getGlobalBounds().width / 2 + 43.f , 
-		position.y - this->sprite.getGlobalBounds().height / 2 - 20.f));
+		position.y - this->sprite.getGlobalBounds().height / 2 + 15 ));
 }
 
 

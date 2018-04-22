@@ -9,6 +9,9 @@ public:
 	Bullet(Texture *texture, Vector2f position, Vector2f scale,
 		float maxVelocity, Vector2f direction, float initialVelocity, float acceleration);
 	virtual ~Bullet();
+	
+	inline const Vector2f& getPosition() const { return this->sprite.getPosition(); }
+	inline FloatRect getGlobalBounds() const { return this->sprite.getGlobalBounds(); }
 
 	void Movement();
     void Update();
