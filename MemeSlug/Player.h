@@ -43,9 +43,8 @@ private:
 	Vector2f currentVelocity;
 
 	bool faceRight;
-	bool isJumping;
-
-	float maxVelocity;
+	
+    float maxVelocity;
 	float acceleration;
 	float jumpHeight;
 	int speed;
@@ -60,13 +59,16 @@ private:
 	
 	//Attributi mappa. (temporanei)
     const float ground = 700.0f;
-	const float gravitySpeed = 15.0;
+	const float gravitySpeed = 5.0;
 
 	//Timing riguardante il rate dei bullets.
 	int shootTimer;
 	int shootTimerMax;
 	int damageTimer;
 	int damageTimerMax;
+
+	int jumpTimer; 
+	int jumpTimerMax;
 
 	//UI interface (ancora da implementare).
 	int score;

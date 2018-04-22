@@ -7,9 +7,8 @@ enum weapons{BULLET1 = 0, MISSILE};
 
 
 Player::Player(std::vector<Texture> &textures)
-	: hpMax(5), damage(1), score(0), jumpHeight(1), isJumping(false)
+	: hpMax(5), damage(1), score(0), jumpHeight(40)
 {
-	this->isJumping = false;
 	this->jumpHeight = jumpHeight;
 	this->faceRight = true;
 
@@ -29,6 +28,10 @@ Player::Player(std::vector<Texture> &textures)
 	this->shootTimer = this->shootTimerMax;
 	this->damageTimerMax = 10;
 	this->damageTimer = this->damageTimerMax;
+
+	//Frequenza salto.
+	this->jumpTimerMax = 80;
+	this->jumpTimer = this->jumpTimerMax;
 
 	//Velocità, accelerazione e attrito. 
 	this->maxVelocity = 15.0f;
@@ -81,20 +84,32 @@ void Player::Movement()
 
 	}
 
-	if (Keyboard::isKeyPressed(Keyboard::Up) && isJumping == false)
+	if (Keyboard::isKeyPressed(Keyboard::Up) && this->jumpTimer >= this->jumpTimerMax)
 	{
-		isJumping = true;
-		this->sprite.move(0.0f, -sqrt(2.0f *981.0f*jumpHeight));
-		this->sprite.move(0.0f, gravitySpeed);
+		
+		
+		this->direction.x = 0.0f;
+		this->direction.y = -20.0f;
+	
+		
+		if (this->currentVelocity.y > -this->maxVelocity && this->direction.y < 0)
+		{
+			this->currentVelocity.y += this->direction.y * this->acceleration;
+			
+		}
+		
+		this->jumpTimer = 0;
+
 	}
-
-
+	
 	if (this->sprite.getPosition().y < ground)
 	{
 		this->sprite.move(0.0f, gravitySpeed);
 	}
-	isJumping = false;
+	
 
+
+	
 
 	//Attrito.
 	if (this->currentVelocity.x > 0)
@@ -196,6 +211,9 @@ void Player::Update()
 {
     if (this->shootTimer < this->shootTimerMax)
 		this->shootTimer++;
+
+	if (this->jumpTimer < this->jumpTimerMax)
+		this->jumpTimer++; 
 
 	if (this->damageTimer < this->damageTimerMax)
 		this->damageTimer++;
