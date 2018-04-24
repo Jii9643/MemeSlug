@@ -28,6 +28,8 @@ private:
 	Vector2f direction;
 
 	float dtMultiplier;
+	float damageTimer;
+	float damageTimerMax;
 
 	int type; 
 	int hp; 

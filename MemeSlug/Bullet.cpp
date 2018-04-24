@@ -1,7 +1,6 @@
 #include "Bullet.h"
 
 
-
 Bullet::Bullet(Texture *texture, Vector2f position, Vector2f scale,
 	float maxVelocity, Vector2f direction, float initialVelocity, float acceleration)
 {

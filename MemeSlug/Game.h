@@ -32,18 +32,18 @@ private:
 
 	//Text
 	Font font;
-	std::vector<Text> staticPlayerTexts;
+	Text staticPlayerText;
 	Text gameOverText;
 
 	//Players
-	std::vector<Player> players;
-	int playersAlive;
+	dArr<Player> players;
+	
 
 	//Boxes.
 	std::vector<Box> boxes;
 
 	//Enemies
-	std::vector<Enemy> enemies;
+	dArr<Enemy> enemies;
 	std::vector<Enemy> enemiesSaved;
 	float enemySpawnTimer;
 	float enemySpawnTimerMax;

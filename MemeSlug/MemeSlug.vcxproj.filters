@@ -50,5 +50,8 @@
     <ClInclude Include="Enemy.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
+    <ClInclude Include="dArr.h">
+      <Filter>File di risorse</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

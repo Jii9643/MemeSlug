@@ -12,11 +12,13 @@ public:
 	virtual ~Player();
 
 	//Funzione inline, riferimento a bullets.
-	inline std::vector<Bullet>& getBullets() { return this->bullets; }
+	Bullet& getBullet(unsigned index);
+	void removeBullet(unsigned index);
+	inline const int getBulletsSize() const { return this->bullets.size(); }
 
 	//Funzione inline, riferimento a posizione di player.
 	inline const Vector2f& getPosition() const { return this->sprite.getPosition(); }
-	inline const int getDamage() const { return this->damage; }
+	int getDamage() const;
 	inline FloatRect getGlobalBounds() const { return this->sprite.getGlobalBounds(); }
 	inline const int& getHp() const { return this->hp; }
 	inline const int& getHpMax() const { return this->hpMax; }
@@ -58,11 +60,11 @@ private:
 	//Puntatori a texture per i diversi tipi di bullet.
 	Texture *bulletTexture;
 	Texture *missileTexture;
-	std::vector<Bullet> bullets;
+	dArr<Bullet> bullets;
 	
 	//Attributi mappa. (temporanei)
     const float ground = 700.0f;
-	const float gravitySpeed = 5.0;
+	const float gravitySpeed = 10.0;
 
 	//Timing riguardante il rate dei bullets.
 	float shootTimer;
