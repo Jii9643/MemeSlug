@@ -29,7 +29,7 @@ Player::Player(std::vector<Texture> &textures)
 	//Gestione frequenza Sparo
 	this->shootTimerMax = 20;
 	this->shootTimer = this->shootTimerMax;
-	this->damageTimerMax = 10;
+	this->damageTimerMax = 40;
 	this->damageTimer = this->damageTimerMax;
 
 	//Frequenza salto.
@@ -85,6 +85,13 @@ int Player::getDamage() const
 
 	return damage;
 
+}
+
+void Player::takeDamage(int damage)
+{
+	this->hp -= damage;
+
+	this->damageTimer = 0;
 }
 
 //Metodo di movimento del player. 
@@ -236,6 +243,23 @@ void Player::Combat(const float &dt)
 			}
 		}
 		this->shootTimer = 0;
+	}
+
+	//Danneggiato
+	if (this->isDamagedCooldown())
+	{
+		if ((int)this->damageTimer % 2 == 0)
+		{
+			this->sprite.setColor(Color::Magenta);
+		}
+		else
+		{
+			this->sprite.setColor(Color::White);
+		}
+	}
+	else
+	{
+		this->sprite.setColor(Color::White);
 	}
 }
 

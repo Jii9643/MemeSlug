@@ -18,6 +18,7 @@ public:
 	//Funzioni 
 	void Update(const float &dt);
 	void Draw();
+	void InitTextures();
 
 	//Funzioni per l'interfaccia utente (ancora non implementate)
 	void UpdateUI();
@@ -50,5 +51,6 @@ private:
 
 	//Textures
 	std::vector<Texture> textures;
+	dArr<Texture> enemyTextures;
 	Texture boxTexture;
 };

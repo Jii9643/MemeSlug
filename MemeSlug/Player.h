@@ -11,7 +11,7 @@ public:
 	Player(std::vector<Texture> &textures);
 	virtual ~Player();
 
-	//Funzione inline, riferimento a bullets.
+	//Bullets del player.
 	Bullet& getBullet(unsigned index);
 	void removeBullet(unsigned index);
 	inline const int getBulletsSize() const { return this->bullets.size(); }
@@ -22,8 +22,11 @@ public:
 	inline FloatRect getGlobalBounds() const { return this->sprite.getGlobalBounds(); }
 	inline const int& getHp() const { return this->hp; }
 	inline const int& getHpMax() const { return this->hpMax; }
-	inline void takeDamage(int damage) { this->hp -= damage; }
-	inline bool isAlive() const {return this->hp > 0;}
+	void takeDamage(int damage);
+	inline bool isAlive() const { return this->hp > 0; }
+	inline void gainScore(int score) { this->score += score; }
+	inline const int getScore() { return this->score; }
+	inline bool isDamagedCooldown() { return this->damageTimer < this->damageTimerMax; }
 
 
 	//Funzioni 
