@@ -121,7 +121,7 @@ void Game::Update(const float &dt)
 		if (this->enemySpawnTimer >= this->enemySpawnTimerMax)
 		{
 			this->enemies.add(Enemy(this->enemyTextures,
-				this->window->getSize(), Vector2f(rand() % this->window->getSize().x, 700.f),
+				this->window->getSize(), Vector2f(rand() % this->window->getSize().x, 700.f), 
 				Vector2f(-1.f, 0.f), Vector2f(0.3f, 0.3f),
 				0, 5, 3, 1 , 0));
 

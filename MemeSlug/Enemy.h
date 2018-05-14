@@ -19,6 +19,7 @@ public:
 	inline const int& getPlayerFollowNr() const { return this->playerFollowNr; }
 
 	//Funzioni 
+	void collisionUpdate(const float& dt);
 	void takeDamage(int damage);
 	void Update(const float &dt, Vector2f playerPosition);
 	void Draw(RenderTarget &target);
@@ -32,7 +33,10 @@ public:
 
 	Vector2f normalize(Vector2f v, float length)
 	{
-		return v / length;
+		if (length == 0)
+			return Vector2f(0.f, 0.f);
+		else
+			return v / length;
 	}
 
 private: 
@@ -40,6 +44,8 @@ private:
 	Sprite sprite; 
 	Vector2u windowBounds;
 	Vector2f direction;
+	Vector2f normalizeDir;
+	float maxVelocity;
 
 	float dtMultiplier;
 	float damageTimer;

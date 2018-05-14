@@ -16,7 +16,7 @@ public:
 	void removeBullet(unsigned index);
 	inline const int getBulletsSize() const { return this->bullets.size(); }
 
-	//Funzione inline, riferimento a posizione di player.
+	//Funzione inline
 	inline const Vector2f& getPosition() const { return this->sprite.getPosition(); }
 	int getDamage() const;
 	inline FloatRect getGlobalBounds() const { return this->sprite.getGlobalBounds(); }
@@ -32,13 +32,28 @@ public:
 	//Funzioni 
 	void Draw(RenderTarget &target);
 	void Update(Vector2u windowBounds, const float &dt);
-	void Movement(const float &dt);
+	void Movement(Vector2u windowBounds,const float &dt);
 	void Combat(const float &dt);
 
 	FloatRect playerBounds;
 
 	//Membri statici
 	static unsigned players;
+
+	//Funzioni regolari
+	float vectorLength(Vector2f v)
+	{
+		return sqrt(pow(v.x, 2) + pow(v.y, 2));
+	}
+
+	Vector2f normalize(Vector2f v, float length)
+	{
+		if (length == 0)
+			return Vector2f(0.f, 0.f);
+		else
+		return v / length;
+	}
+
 
 private:
 	
@@ -57,6 +72,8 @@ private:
 	float jumpHeight;
 	int speed;
 	float stabilizerForce;
+	Vector2f movementDirection;
+	Vector2f normDir;
 	
 	unsigned playerNr;
 

@@ -18,7 +18,7 @@ Player::Player(std::vector<Texture> &textures)
 	//Inizializzazione texture del player.
     this->sprite.setTexture(textures[0]);
 	this->sprite.setScale(0.119f, 0.119f);
-	this->sprite.setPosition(100.0f, 700.0f);
+	this->sprite.setPosition(300.0f, 700.0f);
 	this->playerBounds = this->sprite.getLocalBounds();
 	this->hp = this->hpMax;
 
@@ -92,11 +92,19 @@ void Player::takeDamage(int damage)
 	this->hp -= damage;
 
 	this->damageTimer = 0;
+
+	this->currentVelocity.x += -this->normDir.x*10.f;
+	this->currentVelocity.y += -this->normDir.y*10.f;
 }
 
 //Metodo di movimento del player. 
-void Player::Movement(const float &dt)
+void Player::Movement(Vector2u windowBounds,const float &dt)
 {
+	//Update di normDir
+
+	this->normDir = normalize(this->currentVelocity, vectorLength(this->currentVelocity));
+	
+
 	Vector2f direction;
 
 	if (Keyboard::isKeyPressed(Keyboard::Left))
@@ -188,6 +196,33 @@ void Player::Movement(const float &dt)
 	this->playerCenter.x = this->sprite.getPosition().x + this->sprite.getGlobalBounds().width / 2;
 	this->playerCenter.y = this->sprite.getPosition().y + this->sprite.getGlobalBounds().height / 2;
 
+	//Check per la collisione con i bounds della finestra
+	
+	//Sinistra
+	if (this->getPosition().x <= 140)
+	{
+		this->sprite.setPosition(140.f, this->sprite.getPosition().y);
+		this->currentVelocity.x = 0.f;
+	}
+	//Sopra
+	else if (this->getPosition().y <= 0)
+	{
+		this->sprite.setPosition(this->sprite.getPosition().x, 0.f);
+		this->currentVelocity.y = 0.f;
+	}
+    //Destra
+	else if (this->getPosition().x + this->getGlobalBounds().width >= windowBounds.x)
+	{
+		this->sprite.setPosition(windowBounds.x - this->getGlobalBounds().width, this->sprite.getPosition().y );
+		this->currentVelocity.x = 0.f;
+	}
+	//Sotto
+	else if (this->getPosition().y + this->getGlobalBounds().height >= windowBounds.y)
+	{
+		this->sprite.setPosition(this->sprite.getPosition().x , windowBounds.y - this->getGlobalBounds().height);
+		this->currentVelocity.y = 0.f;
+	}
+	
 
 }
 
@@ -290,6 +325,6 @@ void Player::Update(Vector2u windowBounds,const float &dt)
 	if (this->damageTimer < this->damageTimerMax)
 		this->damageTimer += 1.f *dt * this->dtMultiplier;
 
-	this->Movement(dt);
+	this->Movement(windowBounds,dt);
 	this->Combat(dt);
 }
