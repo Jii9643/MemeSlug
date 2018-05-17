@@ -1,13 +1,22 @@
-#include "Box.h"
+#pragma once
+#include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
+#include <SFML\System.hpp>
+#include <iostream>
+#include <vector>
+#include <cstdlib>
+#include <math.h>
+#include <fstream>
+#include "dArr.h"
 
-
+using namespace sf;
 
 class Bullet
 {
 public:
 	
 	Bullet(Texture *texture, Vector2f position, Vector2f scale,
-		float maxVelocity, Vector2f direction, float initialVelocity, float acceleration);
+		 Vector2f direction, float initialVelocity, float maxVelocity, float acceleration);
 	virtual ~Bullet();
 	
 	inline const Vector2f& getPosition() const { return this->sprite.getPosition(); }
@@ -26,6 +35,7 @@ private:
 
 
 	Vector2f currentVelocity;
+	float initialVelocity;
 	float maxVelocity;
 	float acceleration;
 	Vector2f direction;

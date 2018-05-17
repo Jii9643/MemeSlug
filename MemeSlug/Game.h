@@ -31,17 +31,22 @@ private:
 	bool runGame;
 	float dtMultiplier;
 
+	//Score
+	unsigned score;
+	unsigned scoreMultiplier;
+	float multiplierTimerMax;
+	float multiplierTimer;
+	int multiplierAdder;
+	int multiplierAdderMax;
+
 	//Text
 	Font font;
 	Text staticPlayerText;
 	Text gameOverText;
+	Text scoreText;
 
 	//Players
 	dArr<Player> players;
-	
-
-	//Boxes.
-	std::vector<Box> boxes;
 
 	//Enemies
 	dArr<Enemy> enemies;
@@ -51,6 +56,7 @@ private:
 
 	//Textures
 	std::vector<Texture> textures;
-	dArr<Texture> enemyTextures;
+	dArr <Texture> enemyTextures;
 	Texture boxTexture;
+	dArr <Texture> enemyBulletTextures;
 };

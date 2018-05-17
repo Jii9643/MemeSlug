@@ -7,7 +7,7 @@ enum weapons{BULLET1 = 0, MISSILE};
 
 
 Player::Player(std::vector<Texture> &textures)
-	: hpMax(5), damage(1), score(0), jumpHeight(40)
+	: hpMax(50), damage(1), score(0), jumpHeight(40)
 {
 	
 	this->dtMultiplier = 60.f;
@@ -72,7 +72,7 @@ int Player::getDamage() const
 	
 	case MISSILE:
 
-		damage = 2;
+		damage = 3;
 		
 		break;
 	
@@ -248,14 +248,14 @@ void Player::Combat(const float &dt)
 				//crea i proiettili
 				this->bullets.add(Bullet(bulletTexture, this->playerCenter,
 					Vector2f(0.05f, 0.05f),
-					30.0f, Vector2f(1.0f, 0.0f), 1.0f, 2.0f));
+					 Vector2f(1.0f, 0.0f), 1.0f, 30.0f, 2.0f));
 			}
 			else if (this->currentWeapon == MISSILE)
 			{
 				//crea i missili
-				this->bullets.add(Bullet(missileTexture, this->playerCenter,
-					Vector2f(0.3f, 0.3f),
-					30.0f, Vector2f(2.0f, 0.0f), 0.08f, 2.0f));
+				this->bullets.add(Bullet(missileTexture, Vector2f(this->playerCenter.x + 40 , this->playerCenter.y + 20),
+					Vector2f(0.4f, 0.4f),
+					 Vector2f(2.0f, 0.0f), 0.08f, 30.0f, 2.0f));
 			}
 
 		}
@@ -266,15 +266,15 @@ void Player::Combat(const float &dt)
 				//crea i proiettili
 				this->bullets.add(Bullet(bulletTexture, Vector2f(this->playerCenter.x - 140,this->playerCenter.y),
 					Vector2f(-0.05f, 0.05f),
-					30.0f, Vector2f(-1.0f, 0.0f), 1.0f, 2.0f));
+					 Vector2f(-1.0f, 0.0f), 1.0f, 30.0f, 2.0f));
 				
 			}
 			else if (this->currentWeapon == MISSILE)
 			{
 				//crea i missili
-				this->bullets.add(Bullet(missileTexture, Vector2f(this->playerCenter.x - 50, this->playerCenter.y),
-					Vector2f(-0.3f, 0.3f),
-					30.0f, Vector2f(-2.0f, 0.0f), 0.08f, 2.0f));
+				this->bullets.add(Bullet(missileTexture, Vector2f(this->playerCenter.x - 200, this->playerCenter.y + 20),
+					Vector2f(-0.4f, 0.4f),
+					 Vector2f(-2.0f, 0.0f), 0.08f, 30.0f, 2.0f));
 			}
 		}
 		this->shootTimer = 0;

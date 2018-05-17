@@ -1,10 +1,11 @@
 #pragma once
-#include "Box.h"
+#include "Bullet.h"
+
 
 class Enemy
 {
 public:
-	Enemy(dArr<Texture> &textures, Vector2u windowBounds,  Vector2f position, Vector2f direction, 
+	Enemy(dArr<Texture> &textures, dArr<Texture> &bulletTextures, Vector2u windowBounds, Vector2f position, Vector2f moveDirection,
 		Vector2f scale, int type, int hpMax, int damageMax, int damageMin, int playerFollowNr);
 
 	virtual ~Enemy();
@@ -17,6 +18,7 @@ public:
 	inline FloatRect getGlobalBounds() const { return this->sprite.getGlobalBounds(); }
 	inline Vector2f getPosition() const { return this->sprite.getPosition(); }
 	inline const int& getPlayerFollowNr() const { return this->playerFollowNr; }
+	inline dArr<Bullet>& getBullets() { return this->bullets; }
 
 	//Funzioni 
 	void collisionUpdate(const float& dt);
@@ -43,15 +45,23 @@ private:
 	dArr<Texture> *textures;
 	Sprite sprite; 
 	Vector2u windowBounds;
-	Vector2f direction;
-	Vector2f normalizeDir;
+	Vector2f lookDirection;
+	Vector2f normalizedLookDir;
+	Vector2f moveDirection;
+	Vector2f normalizedMoveDir;
 	float maxVelocity;
+
+	dArr <Texture> *bulletTextures;
+	dArr <Bullet> bullets;
 
 	float dtMultiplier;
 	float damageTimer;
 	float damageTimerMax;
 
-	int type; 
+	float shootTimerMax;
+	float shootTimer;
+
+	int type;
 	int hp; 
 	int hpMax; 
 	int damageMin; 

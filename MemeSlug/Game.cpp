@@ -9,6 +9,13 @@ Game::Game(RenderWindow *window)
 	this->window->setFramerateLimit(60);
 	this->dtMultiplier = 60.0f;
 	this->runGame = true;
+	this->scoreMultiplier = 1;
+	this->score = 0;
+	this->multiplierAdderMax = 10;
+	this->multiplierAdder = 0;
+	this->multiplierTimerMax = 400.f;
+	this->multiplierTimer = this->multiplierTimerMax;
+	
 
 	this->InitTextures();
 	
@@ -24,10 +31,6 @@ Game::Game(RenderWindow *window)
 	this->enemySpawnTimer = this->enemySpawnTimerMax;
 
 
-
-	//Creazione delle box (da implementare)
-	
-	//////////
 
 	this->InitUI();
 	
@@ -51,12 +54,16 @@ void Game::InitTextures()
 
 
 	Texture temp;
-	temp.loadFromFile("Textures/soldierMSL.png");
+	temp.loadFromFile("Textures/SimpleSoldier.png");
 	this->enemyTextures.add(Texture(temp));
 	temp.loadFromFile("Textures/Ufo.png");
 	this->enemyTextures.add(Texture(temp));
-}
+	temp.loadFromFile("Textures/soldierMSL.png");
+	this->enemyTextures.add(Texture(temp));
 
+	temp.loadFromFile("Textures/eBullet.png");
+	this->enemyBulletTextures.add(Texture(temp));
+}
 //Ancora da completare
 void Game:: InitUI()
 {
@@ -78,6 +85,12 @@ void Game:: InitUI()
 	this->gameOverText.setString("YOU DIED");
 	this->gameOverText.setPosition(this->window->getSize().x / 2 - 290, this->window->getSize().y / 2 - 100);
 
+
+	this->scoreText.setFont(this->font);
+	this->scoreText.setFillColor(Color(200, 200, 200, 150));
+	this->scoreText.setCharacterSize(25);
+	this->scoreText.setString("Score : 0");
+	this->scoreText.setPosition(20.f, 20.f);
 	
 
 }
@@ -95,6 +108,9 @@ void Game::DrawUI()
 	{
 		this->window->draw(this->gameOverText);
 	}
+
+	//Score 
+	this->window->draw(this->scoreText);
 }
 
 
@@ -105,30 +121,47 @@ void Game::Update(const float &dt)
 {
 	if (this->players.size() > 0)
 	{
-		/*da sistemare
-		for (size_t l = 0; l < this->boxes.size(); l++)
-		{
-			boxes[l].Box::Update();
-		}
-		*/
 
 		int h = 0;
 		//Update timers
 		if (this->enemySpawnTimer < this->enemySpawnTimerMax)
 			this->enemySpawnTimer += 1.f* dt * this->dtMultiplier;
 
+		//Score timer e moltiplicatori di score.
+		if (this->multiplierTimer > 0.f)
+		{
+			this->multiplierTimer -= 1.f* dt * this->dtMultiplier;
+			
+			if (this->multiplierTimer <= 0.f)
+			{
+				this->multiplierTimer = 0.f;
+				this->multiplierAdder = 0;
+				this->scoreMultiplier = 1;
+			}
+
+		}
+		
+
+		this->scoreMultiplier = this->multiplierAdder / this->multiplierAdderMax + 1;
+
+
 		//Enemies spawn
 		if (this->enemySpawnTimer >= this->enemySpawnTimerMax)
 		{
-			this->enemies.add(Enemy(this->enemyTextures,
-				this->window->getSize(), Vector2f(rand() % this->window->getSize().x, 700.f), 
-				Vector2f(-1.f, 0.f), Vector2f(0.3f, 0.3f),
-				0, 5, 3, 1 , 0));
+			this->enemies.add(Enemy(this->enemyTextures, this->enemyBulletTextures,
+				this->window->getSize(), Vector2f(rand() % this->window->getSize().x, 800.f),
+				Vector2f(-1.f, 0.f), Vector2f(1.3f, 1.3f),
+				0, 5, 3, 1,  0));
 
-			this->enemies.add(Enemy(this->enemyTextures,
+		    this->enemies.add(Enemy(this->enemyTextures, this->enemyBulletTextures,
 				this->window->getSize(), Vector2f(rand() % this->window->getSize().x + 800, rand() % this->window->getSize().y - 500),
 				Vector2f(-1.f, 0.f), Vector2f(0.15f, 0.15f),
 				1, 5, 3, 1, 0));
+
+		    this->enemies.add(Enemy(this->enemyTextures, this->enemyBulletTextures,
+				this->window->getSize(), Vector2f(rand() % this->window->getSize().x, 730.f),
+				Vector2f(-1.f, 0.f), Vector2f(0.28f, 0.28f),
+				2, 5, 3, 1, 0));
 
 
 			this->enemySpawnTimer = 0;
@@ -158,8 +191,10 @@ void Game::Update(const float &dt)
 								this->enemies[j].takeDamage(this->players[i].getDamage());
 							if (this->enemies[j].getHP() <= 0)
 							{
-								//Aggiunta score
-								int score = this->enemies[j].getHPMax();
+								//Aggiunta score & Reset del multiplier timer
+								this->multiplierTimer = this->multiplierTimerMax;
+								int score = this->enemies[j].getHPMax() * this->scoreMultiplier;
+								this->multiplierAdder++;	
 								this->players[i].gainScore(score);
 
 
@@ -179,7 +214,20 @@ void Game::Update(const float &dt)
 				}
 			}
 			else
+			{
 				this->runGame = false;
+			}
+
+			//Update score
+			this->score = 0;
+			this->score += players[i].getScore();
+			this->scoreText.setString("Score : " + std::to_string(score) +
+				"\nMultiplier : " + std::to_string(this->scoreMultiplier) +
+			    "\nMultiplier Timer : " + std::to_string((int)this->multiplierTimer) +
+			    "\nNew Multiplier : " + std::to_string(this->multiplierAdder) + " / " +
+			     std::to_string(this->multiplierAdderMax));
+
+
 		}
 
 		if (this->runGame == true)
@@ -189,6 +237,11 @@ void Game::Update(const float &dt)
 			{
 				this->enemies[i].Update(dt, this->players[this->enemies[i].getPlayerFollowNr()].getPosition());
 
+				//Update dei proiettili del nemico.
+				for (size_t k = 0; k < this->enemies[i].getBullets().size(); k++)
+				{
+					this->enemies[i].getBullets()[k].Update(dt);
+				}
 				//Gestione collisione tra player e enemies.
 				for (size_t k = 0; k < this->players.size(); k++)
 				{

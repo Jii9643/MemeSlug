@@ -1,34 +1,64 @@
 #include "Enemy.h"
 
-enum eTypes { SimpleSoldier = 0, Ufo };
 
-Enemy::Enemy(dArr<Texture> &textures, Vector2u windowBounds, Vector2f position, Vector2f direction,
-	Vector2f scale, int type, int hpMax, int damageMax, int damageMin, int playerFollowNr)
+enum eTypes { SimpleSoldier = 0, Ufo, AssaultSoldier };
+enum bulletTypes { Regular = 0, Missile1
+};
+
+Enemy::Enemy(dArr<Texture> &textures, dArr<Texture> &bulletTextures, Vector2u windowBounds, Vector2f position, Vector2f moveDirection,
+	 Vector2f scale, int type, int hpMax, int damageMax, int damageMin, int playerFollowNr)
 {
+
+	this->dtMultiplier = 60.0f;
+
 	this->textures = &textures; 
+	this->bulletTextures = &bulletTextures;
 	this->type = type;
 	this->sprite.setTexture((*this->textures)[this->type]);
-	this->sprite.setScale(scale); 
+	this->sprite.setScale(scale);
 	this->sprite.setPosition(position);
-	this->direction = direction;
+	this->moveDirection = moveDirection;
+	
+	this->shootTimerMax = 5.f;
+	this->shootTimer = this->shootTimerMax;
+	
+    this->sprite.setOrigin(
+		this->sprite.getGlobalBounds().width / 2,
+		this->sprite.getGlobalBounds().height / 2
+	);
+
+	this->windowBounds = windowBounds; 
 
 	this->damageTimerMax = 5.0f;
 	this->damageTimer = 0;
 
+	
+
+
+
 	switch(this->type)
 	{
+	
 	case SimpleSoldier:
-		this->maxVelocity = 10.f;
+		this->maxVelocity = 8.f;
 	    break;
+	
 	case Ufo: 
 		this->maxVelocity = 5.f;
 	    break;
+
+	case AssaultSoldier: 
+		this->maxVelocity = 3.f;
+		this->shootTimerMax = 5.f;
+		this->shootTimer = 0.f;
+		break;
+
 	default: 
 		break;
 	}
 	
 
-	this->dtMultiplier = 60.0f;
+
 
 
 	this->hpMax = hpMax; 
@@ -55,8 +85,8 @@ void Enemy::collisionUpdate(const float& dt)
 		this->sprite.setColor(Color::Red);
 
 		this->sprite.move(
-			this->maxVelocity* -this->normalizeDir.x *  this->damageTimer * dt*dtMultiplier,
-			this->maxVelocity* -this->normalizeDir.y *  this->damageTimer * dt*dtMultiplier);
+			this->maxVelocity* -this->normalizedMoveDir.x *  this->damageTimer * dt*dtMultiplier,
+			this->maxVelocity* -this->normalizedMoveDir.y *  this->damageTimer * dt*dtMultiplier);
 	}
 	else
 		this->sprite.setColor(Color::White);
@@ -83,10 +113,10 @@ void Enemy::Update(const float &dt, Vector2f playerPosition)
 	case SimpleSoldier: 
 		
 		this->sprite.move(
-			this->direction.x *this->maxVelocity*dt*this->dtMultiplier, 
-			this->direction.y *this->maxVelocity*dt*this->dtMultiplier);
+			this->moveDirection.x *this->maxVelocity*dt*this->dtMultiplier, 
+			this->moveDirection.y *this->maxVelocity*dt*this->dtMultiplier);
 
-		this->normalizeDir = normalize(this->direction, vectorLength(this->direction));
+		this->normalizedMoveDir = normalize(this->moveDirection, vectorLength(this->moveDirection));
 		
 		break; 
 
@@ -94,23 +124,56 @@ void Enemy::Update(const float &dt, Vector2f playerPosition)
 
 		if (this->sprite.getPosition().x > playerPosition.x)
 		{
-			this->direction.x = playerPosition.x - this->sprite.getPosition().x; //distanza tra enemy e player
-			this->direction.y = playerPosition.y - this->sprite.getPosition().y;
+			this->moveDirection.x = playerPosition.x - this->sprite.getPosition().x; //distanza tra enemy e player
+			this->moveDirection.y = playerPosition.y - this->sprite.getPosition().y;
 		}
-		this->normalizeDir = normalize(this->direction, vectorLength(this->direction)); //normalizzo quindi tra 0 e 1
+		this->normalizedMoveDir = normalize(this->moveDirection, vectorLength(this->moveDirection)); //normalizzo quindi tra 0 e 1
 
-		if (this->normalizeDir.y > 0.3)
-			this->normalizeDir.y = 0.3;
-		else if (this->normalizeDir.y < -0.3)
-			this->normalizeDir.y = -0.3;
+		if (this->normalizedMoveDir.y > 0.3)
+			this->normalizedMoveDir.y = 0.3;
+		else if (this->normalizedMoveDir.y < -0.3)
+			this->normalizedMoveDir.y = -0.3;
 
 
-		if (this->normalizeDir.x > -0.7)
-			this->normalizeDir.x = -0.7;
+		if (this->normalizedMoveDir.x > -0.7)
+			this->normalizedMoveDir.x = -0.7;
 
 		this->sprite.move(
-			this->normalizeDir.x * this->maxVelocity * dt * this->dtMultiplier, 
-			this->normalizeDir.y * (this->maxVelocity + 15) * dt * this->dtMultiplier);
+			this->normalizedMoveDir.x * this->maxVelocity * dt * this->dtMultiplier, 
+			this->normalizedMoveDir.y * (this->maxVelocity + 15) * dt * this->dtMultiplier);
+
+		break;
+	
+	case AssaultSoldier:
+
+		this->shootTimerMax = 60.f;
+
+		if (this->shootTimer < this->shootTimerMax)
+			this->shootTimer += 1.f *dt * this->dtMultiplier;
+
+		this->lookDirection.x = playerPosition.x - this->sprite.getPosition().x; //distanza tra enemy e player
+		this->lookDirection.y = playerPosition.y - this->sprite.getPosition().y;
+		
+
+		this->normalizedLookDir = normalize(this->lookDirection, vectorLength(this->lookDirection));
+
+		this->sprite.move(
+			this->moveDirection.x *this->maxVelocity*dt*this->dtMultiplier,
+			this->moveDirection.y *this->maxVelocity*dt*this->dtMultiplier);
+
+		this->normalizedMoveDir = normalize(this->moveDirection, vectorLength(this->moveDirection));
+
+		//Sparo
+		if (this->shootTimer >= this->shootTimerMax)
+		{
+			this->bullets.add(Bullet(&(*this->bulletTextures)[Regular],Vector2f(this->sprite.getPosition().x - 20, this->sprite.getPosition().y + 35),
+				Vector2f(-0.15f, 0.15f), Vector2f(-1.f, 0.f),  
+				 2.f, 5.f, 0.5f));
+
+			this->shootTimer = 0.f;
+		}
+
+		break;
 
 	default: 
 		
@@ -123,8 +186,8 @@ void Enemy::Update(const float &dt, Vector2f playerPosition)
 
 		this->sprite.setColor(Color::Red);
 
-		this->sprite.move(20.0f* -this->normalizeDir.x *  this->damageTimer * dt*dtMultiplier ,
-			              20.0f* -this->normalizeDir.y *  this->damageTimer * dt*dtMultiplier);
+		this->sprite.move(20.0f* -this->normalizedMoveDir.x *  this->damageTimer * dt*dtMultiplier ,
+			              20.0f* -this->normalizedMoveDir.y *  this->damageTimer * dt*dtMultiplier);
 	}
 	else
 		this->sprite.setColor(Color::White);
@@ -136,6 +199,12 @@ void Enemy::Update(const float &dt, Vector2f playerPosition)
 void Enemy::Draw(RenderTarget &target)
 {
 	target.draw(this->sprite);
+
+		for (size_t i = 0; i < this->bullets.size(); i++)
+		{
+			this->bullets[i].Draw(target);
+		}
+	
 }
 
 

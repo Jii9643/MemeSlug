@@ -1,0 +1,10 @@
+﻿  Enemy.cpp
+c:\projects\memeslug\memeslug\enemy.cpp(133): warning C4305: '=': troncamento da 'double' a 'float'
+c:\projects\memeslug\memeslug\enemy.cpp(135): warning C4305: '=': troncamento da 'double' a 'float'
+c:\projects\memeslug\memeslug\enemy.cpp(139): warning C4305: '=': troncamento da 'double' a 'float'
+c:\projects\memeslug\memeslug\enemy.cpp(205): warning C4267: 'argomento': conversione da 'size_t' a 'int'. Possibile perdita di dati.
+c:\projects\memeslug\memeslug\darr.h(76): warning C4018: '>=': errata corrispondenza tra signed e unsigned
+  c:\projects\memeslug\memeslug\darr.h(75): note: durante la compilazione della funzione membro '<Sconosciuto>' di modello <Sconosciuto>
+  c:\projects\memeslug\memeslug\enemy.cpp(17): note: vedere il riferimento all'istanza '<Sconosciuto>' della funzione <Sconosciuto> di cui è in corso la compilazione
+  c:\projects\memeslug\memeslug\enemy.cpp(14): note: vedere il riferimento all'istanza '<Sconosciuto>' di modello <Sconosciuto> di cui è in corso la compilazione
+  MemeSlug.vcxproj -> C:\Projects\MemeSlug\x64\Debug\MemeSlug.exe
