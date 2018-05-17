@@ -1,15 +1,6 @@
 #pragma once
-#include <SFML/Graphics.hpp>
-#include <SFML/Audio.hpp>
-#include <SFML\System.hpp>
-#include <iostream>
-#include <vector>
-#include <cstdlib>
-#include <math.h>
-#include <fstream>
-#include "dArr.h"
+#include "Pickup.h"
 
-using namespace sf;
 
 class Bullet
 {

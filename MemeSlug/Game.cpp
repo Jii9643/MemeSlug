@@ -54,6 +54,8 @@ void Game::InitTextures()
 
 
 	Texture temp;
+
+	//Nemici
 	temp.loadFromFile("Textures/SimpleSoldier.png");
 	this->enemyTextures.add(Texture(temp));
 	temp.loadFromFile("Textures/Ufo.png");
@@ -61,10 +63,19 @@ void Game::InitTextures()
 	temp.loadFromFile("Textures/soldierMSL.png");
 	this->enemyTextures.add(Texture(temp));
 
+	//Proiettili dei nemici
 	temp.loadFromFile("Textures/eBullet.png");
 	this->enemyBulletTextures.add(Texture(temp));
+
+	//Pickups
+	temp.loadFromFile("Textures/Box.png");
+	this->pickupTextures.add(Texture(temp));
+	temp.loadFromFile("Textures/Box1.png");
+	this->pickupTextures.add(Texture(temp));
+
+
 }
-//Ancora da completare
+
 void Game:: InitUI()
 {
 
@@ -189,6 +200,8 @@ void Game::Update(const float &dt)
 
 							if (this->enemies[j].getHP() > 0)
 								this->enemies[j].takeDamage(this->players[i].getDamage());
+
+							//Morte del nemico.
 							if (this->enemies[j].getHP() <= 0)
 							{
 								//Aggiunta score & Reset del multiplier timer
@@ -196,6 +209,28 @@ void Game::Update(const float &dt)
 								int score = this->enemies[j].getHPMax() * this->scoreMultiplier;
 								this->multiplierAdder++;	
 								this->players[i].gainScore(score);
+
+								//Spawn del pickup
+								int dropChance = rand() % 10 + 1; 
+								
+								if (dropChance > 1)
+								{
+									dropChance = rand() % 10 + 1;
+									
+									if (dropChance > 8)
+									{
+										this->pickups.add(Pickup(this->pickupTextures,
+											Vector2f(this->enemies[j].getPosition().x, 800.f), Vector2f(0.3f, 0.3f),
+											0, 600.f));
+									}
+									else if (dropChance > 7)
+									{
+										this->pickups.add(Pickup(this->pickupTextures,
+											Vector2f(this->enemies[j].getPosition().x, 810.f), Vector2f(0.12f, 0.12f),
+											1, 600.f));
+
+									}
+								}
 
 
 								this->enemies.remove(j);
@@ -270,6 +305,46 @@ void Game::Update(const float &dt)
 					return;
 				}
 			}
+
+			//Update pickups
+			for (size_t i = 0; i < this->pickups.size(); i++)
+			{
+				this->pickups[i].Update(dt);
+				
+				for (size_t k = 0; k < this->players.size(); k++)
+				{
+					if (this->pickups[i].checkCollision(this->players[k].getGlobalBounds()))
+					{
+
+						switch (this->pickups[i].getType())
+						{
+						
+						case 0:
+							break;
+						
+						case 1: 
+							break; 
+						
+						default: 
+							break; 
+
+						}
+
+						this->pickups.remove(i);
+						return; 
+					}
+				}
+
+				if (this->pickups[i].canDelete())
+				{
+					this->pickups.remove(i);
+					break;
+				}
+
+			}
+
+
+
 		}
 		else
 			this->enemySpawnTimer = 0;
@@ -283,21 +358,26 @@ void Game::Draw()
 {
 	this->window->clear();
 	
+	//Draw players.
 	for (size_t i = 0; i < this->players.size(); i++)
 	{
 		this->players[i].Player::Draw(*this->window);
 	}
-	/*da sistemare
-	for (size_t j = 0; j < this->boxes.size(); j++)
-	{
-		this->boxes[j].Box::Draw(*this->window);
-	}
-	*/
-
+	
+	//Draw enemies.
 	for (size_t i = 0; i < this->enemies.size(); i++)
 	{
 		this->enemies[i].Draw(*this->window);
 	}
+
+	//Draw pickups.
+	for (size_t i = 0; i < this->pickups.size(); i++)
+	{
+		this->pickups[i].Draw(*this->window);
+		std::cout << "lol" << std::endl;
+	}
+
+
 	this->DrawUI();
 
 	this->window->display();

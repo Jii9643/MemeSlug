@@ -48,6 +48,9 @@ private:
 	//Players
 	dArr<Player> players;
 
+	//Pickups
+	dArr<Pickup> pickups;
+
 	//Enemies
 	dArr<Enemy> enemies;
 	std::vector<Enemy> enemiesSaved;
@@ -59,4 +62,5 @@ private:
 	dArr <Texture> enemyTextures;
 	Texture boxTexture;
 	dArr <Texture> enemyBulletTextures;
+	dArr<Texture> pickupTextures;
 };
