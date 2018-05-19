@@ -16,7 +16,7 @@ public:
 	void removeBullet(unsigned index);
 	inline const int getBulletsSize() const { return this->bullets.size(); }
 
-	//Funzione inline
+	//Funzioni inline
 	inline const Vector2f& getPosition() const { return this->sprite.getPosition(); }
 	int getDamage() const;
 	inline FloatRect getGlobalBounds() const { return this->sprite.getGlobalBounds(); }
@@ -27,9 +27,17 @@ public:
 	inline void gainScore(int score) { this->score += score; }
 	inline const int getScore() { return this->score; }
 	inline bool isDamagedCooldown() { return this->damageTimer < this->damageTimerMax; }
+	inline void enableMissile() { this->currentWeapon = 1; }
+	inline void disableMissile() { this->currentWeapon = 0; }
+	inline void enableLaser() { this->currentWeapon = 2; }
+	inline void disableLaser() { this->currentWeapon = 0; }
+	inline void enablePiercingShot() { this->piercingShot = true; }
+	inline void disablePiercingShot() { this->piercingShot = false; }
+	inline bool getPiercingShot() const { return this->piercingShot; }
 
 
 	//Funzioni 
+	void Reset();
 	void Draw(RenderTarget &target);
 	void Update(Vector2u windowBounds, const float &dt);
 	void Movement(Vector2u windowBounds,const float &dt);
@@ -66,6 +74,9 @@ private:
 
 	bool faceRight;
 
+	//Pickups
+	bool piercingShot;
+
 
     float maxVelocity;
 	float acceleration;
@@ -80,6 +91,7 @@ private:
 	//Puntatori a texture per i diversi tipi di bullet.
 	Texture *bulletTexture;
 	Texture *missileTexture;
+	Texture *laserTexture;
 	dArr<Bullet> bullets;
 	
 	//Attributi mappa. (temporanei)
@@ -94,6 +106,8 @@ private:
 
 	float jumpTimer; 
 	float jumpTimerMax;
+
+
 
 	//UI interface (ancora da implementare).
 	int score;

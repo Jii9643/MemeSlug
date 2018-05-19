@@ -3,11 +3,11 @@
 unsigned Player::players = 0;
 
 //Tipi di arma (temporaneo)
-enum weapons{BULLET1 = 0, MISSILE};
+enum weapons{BULLET1 = 0, MISSILE, LASER};
 
 
 Player::Player(std::vector<Texture> &textures)
-	: hpMax(50), damage(1), score(0), jumpHeight(40)
+	: hpMax(5), damage(1), score(0), jumpHeight(40)
 {
 	
 	this->dtMultiplier = 60.f;
@@ -21,10 +21,13 @@ Player::Player(std::vector<Texture> &textures)
 	this->sprite.setPosition(300.0f, 700.0f);
 	this->playerBounds = this->sprite.getLocalBounds();
 	this->hp = this->hpMax;
+	
+	this->piercingShot = false;
 
 	//Inizializzazione delle textures dei bullets.
 	this->bulletTexture = &textures[1];
 	this->missileTexture = &textures[2];
+	this->laserTexture = &textures[3];
 
 	//Gestione frequenza Sparo
 	this->shootTimerMax = 20;
@@ -42,7 +45,7 @@ Player::Player(std::vector<Texture> &textures)
 	this->stabilizerForce = 0.5f;
 
 	//Arma corrente.
-	this->currentWeapon = MISSILE;
+	this->currentWeapon = BULLET1;
 
 	//Numero giocatori
 	this->playerNr = Player::players;
@@ -66,13 +69,19 @@ int Player::getDamage() const
 	{
 	case BULLET1:
 
-		damage = 1;
+		damage = 3;
 		
 		break;
 	
 	case MISSILE:
 
 		damage = 3;
+		
+		break;
+
+	case LASER:
+
+		damage = 2;
 		
 		break;
 	
@@ -257,7 +266,12 @@ void Player::Combat(const float &dt)
 					Vector2f(0.4f, 0.4f),
 					 Vector2f(2.0f, 0.0f), 0.08f, 30.0f, 2.0f));
 			}
+			else if (this->currentWeapon == LASER)
 
+				//crea il laser
+				this->bullets.add(Bullet(laserTexture, Vector2f(this->playerCenter.x + 40, this->playerCenter.y + 20),
+					Vector2f(1.f, 0.4f),
+					Vector2f(20.0f, 0.0f), 0.08f, 30.0f, 2.0f));
 		}
 		else 
 		{
@@ -276,6 +290,12 @@ void Player::Combat(const float &dt)
 					Vector2f(-0.4f, 0.4f),
 					 Vector2f(-2.0f, 0.0f), 0.08f, 30.0f, 2.0f));
 			}
+			else if (this->currentWeapon == LASER)
+
+				//crea il laser
+				this->bullets.add(Bullet(laserTexture, Vector2f(this->playerCenter.x + 40, this->playerCenter.y + 20),
+					Vector2f(1.f, 0.4f),
+					Vector2f(-20.0f, 0.0f), 0.08f, 30.0f, 2.0f));
 		}
 		this->shootTimer = 0;
 	}
@@ -314,8 +334,24 @@ void Player::removeBullet(unsigned index)
 	return this->bullets.remove(index);
 }
 
+void Player::Reset()
+{
+	this->hpMax = 5;
+	this->hp = this->hpMax;
+	this->sprite.setPosition(Vector2f(300.f, 700.f));
+	this->bullets.clear();
+	this->piercingShot = false;
+	this->currentVelocity.x = 0;
+	this->currentVelocity.y = 0;
+	this->currentWeapon = BULLET1;
+	this->shootTimer = this->shootTimerMax;
+	this->damageTimer = this->damageTimerMax;
+	this->score = 0;
+}
+
 void Player::Update(Vector2u windowBounds,const float &dt)
 {
+
     if (this->shootTimer < this->shootTimerMax)
 		this->shootTimer += 1.f * dt * this->dtMultiplier;
 

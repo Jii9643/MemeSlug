@@ -20,6 +20,7 @@ public:
 	void Draw();
 	void InitTextures();
 
+
 	//Funzioni per l'interfaccia utente (ancora non implementate)
 	void UpdateUI();
 	void InitUI();
@@ -30,8 +31,13 @@ private:
 	RenderWindow * window;
 	bool runGame;
 	float dtMultiplier;
+	float keyTime;
+	float keyTimeMax;
+	bool paused;
 
 	//Score
+	Clock scoreTimer;
+    int scoreTime;
 	unsigned score;
 	unsigned scoreMultiplier;
 	float multiplierTimerMax;
