@@ -1,7 +1,7 @@
 #pragma once
 #include"Bullet.h"
 
-class Player
+class Player 
 {
 
 public:
@@ -42,6 +42,7 @@ public:
 	void Update(Vector2u windowBounds, const float &dt);
 	void Movement(Vector2u windowBounds,const float &dt);
 	void Combat(const float &dt);
+    
 
 	FloatRect playerBounds;
 
@@ -106,7 +107,6 @@ private:
 
 	float jumpTimer; 
 	float jumpTimerMax;
-
 
 
 	//UI interface (ancora da implementare).

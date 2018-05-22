@@ -5,12 +5,13 @@
 #include <iostream>
 #include <vector>
 #include <cstdlib>
+#include <stdlib.h>
 #include <math.h>
 #include <fstream>
 #include "dArr.h"
+#include <list>
 
 using namespace sf;
-
 
 class Pickup
 {

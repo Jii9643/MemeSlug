@@ -17,6 +17,8 @@ Game::Game(RenderWindow *window)
 	this->multiplierAdder = 0;
 	this->multiplierTimerMax = 400.f;
 	this->multiplierTimer = this->multiplierTimerMax;
+	this->paused = true;
+	
 
 	this->InitTextures();
 	
@@ -30,6 +32,9 @@ Game::Game(RenderWindow *window)
 
 	this->enemySpawnTimerMax = 200;
 	this->enemySpawnTimer = this->enemySpawnTimerMax;
+
+	//Init bosses
+	this->bossEncounter = false;
 
 
 
@@ -77,6 +82,16 @@ void Game::InitTextures()
 	temp.loadFromFile("Textures/Box1.png");
 	this->pickupTextures.add(Texture(temp));
 
+	//Bosses body
+	temp.loadFromFile("Textures/Box1.png");
+	this->bossBodyTextures.add(Texture(temp));
+
+	temp.loadFromFile("Textures/Box1.png");
+	this->bossGunTextures.add(Texture(temp));
+
+	temp.loadFromFile("Textures/Box1.png");
+	this->bossBulletTextures.add(Texture(temp));
+
 
 }
 
@@ -93,30 +108,29 @@ void Game:: InitUI()
 
 		
 	}
-
+	//Game Over
 	this->gameOverText.setFont(this->font);
 	this->gameOverText.setFillColor(Color(153,0,0,255));
 	this->gameOverText.setCharacterSize(40);
 	this->gameOverText.setString(
-		std::string("YOU DIED!"));/*\n\n\nScore: " +
-			std::to_string(this->score) +
-			"\n" +
-			"Time: " +
-			std::to_string(this->scoreTime) +
-			"\n" +
-			"Score/Second: " +
-			std::to_string((int)round((double)this->score / (double)this->scoreTime))) +
-		    "\nF1 to RESTART"
-	); */
+		std::string("YOU DIED!"));
 	this->gameOverText.setPosition(this->window->getSize().x / 2 - 290, this->window->getSize().y / 2 - 400);
 
-
+	//Score
 	this->scoreText.setFont(this->font);
 	this->scoreText.setFillColor(Color(200, 200, 200, 150));
 	this->scoreText.setCharacterSize(25);
 	this->scoreText.setString("Score : 0");
 	this->scoreText.setPosition(20.f, 20.f);
 	
+	//Menù/Pausa
+	this->controlsText.setFont(this->font);
+	this->controlsText.setFillColor(Color::White);
+	this->controlsText.setCharacterSize(25);
+	this->controlsText.setString(
+		"A: SHOOT\nRIGHT ARROW: RIGHT\nLEFT ARROW: LEFT \nUP ARROW: JUMP \nP: PAUSE/CONTROLS (START GAME)\nESC: QUIT\nWARNING, SCORE-TIMER DOES NOT STOP WHEN PAUSED!"
+	);
+	this->controlsText.setPosition(50.f, 400.f);
 
 }
 
@@ -136,6 +150,11 @@ void Game::DrawUI()
 
 	//Score 
 	this->window->draw(this->scoreText);
+
+
+	//Menù
+	if (this->paused)
+		this->window->draw(this->controlsText);
 }
 
 
@@ -275,6 +294,8 @@ void Game::Update(const float &dt)
 
 
 									this->enemies.remove(j);
+
+									
 								}
 								return;
 
@@ -419,10 +440,12 @@ void Game::Update(const float &dt)
 					this->scoreMultiplier = 1;
 					this->multiplierAdder = 0;
 					this->scoreTime = 0;
-					this->enemySpawnTimerMax = 35.f; //ALSO IN CONSTUCTOR!
+					this->bossEncounter = false;
+					this->enemySpawnTimerMax = 200.f; 
 					this->scoreTimer.restart();
 					this->enemies.clear();
 					this->pickups.clear();
+					this->bosses.clear();
 				}
 				this->enemySpawnTimer = 0;
 			}
