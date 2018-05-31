@@ -1,12 +1,15 @@
 #pragma once
 #include "Bullet.h"
+#include "StrategyL.h"
+#include"StrategyR.h"
+#include"StrategyMove.h"
 
 
 class Enemy
 {
 public:
 	Enemy(dArr<Texture> &textures, dArr<Texture> &bulletTextures, Vector2u windowBounds, Vector2f position, Vector2f moveDirection,
-		Vector2f scale, int type, int hpMax, int damageMax, int damageMin, int playerFollowNr);
+		Vector2f scale, int type, int hpMax, int damageMax, int damageMin, int playerFollowNr, StrategyMove* sm = nullptr);
 
 	virtual ~Enemy();
 	
@@ -18,10 +21,11 @@ public:
 	inline FloatRect getGlobalBounds() const { return this->sprite.getGlobalBounds(); }
 	inline Vector2f getPosition() const { return this->sprite.getPosition(); }
 	inline const int& getPlayerFollowNr() const { return this->playerFollowNr; }
+	inline const int& getType() const { return this->type; }
 	inline dArr<Bullet>& getBullets() { return this->bullets; }
 
 	//Funzioni 
-	void collisionUpdate(const float& dt);
+	void collisionUpdate(const float& dt,Vector2f playerPosition);
 	void takeDamage(int damage);
 	void Update(const float &dt, Vector2f playerPosition);
 	void Draw(RenderTarget &target);
@@ -67,5 +71,8 @@ private:
 	int damageMin; 
 	int damageMax;
 	int playerFollowNr;
+
+	//Strategy
+	StrategyMove* strategy;
 };
 

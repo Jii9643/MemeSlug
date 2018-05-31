@@ -6,8 +6,8 @@ unsigned Player::players = 0;
 enum weapons{BULLET1 = 0, MISSILE, LASER};
 
 
-Player::Player(std::vector<Texture> &textures)
-	: hpMax(5), damage(1), score(0), jumpHeight(40)
+Player::Player(std::vector<Texture> &textures, int ks, int ku, int pnts)
+	: hpMax(50), damage(1), score(0), jumpHeight(40)
 {
 	
 	this->dtMultiplier = 60.f;
@@ -16,6 +16,7 @@ Player::Player(std::vector<Texture> &textures)
 	this->faceRight = true;
 
 	//Inizializzazione texture del player.
+
     this->sprite.setTexture(textures[0]);
 	this->sprite.setScale(0.119f, 0.119f);
 	this->sprite.setPosition(300.0f, 700.0f);
@@ -34,6 +35,11 @@ Player::Player(std::vector<Texture> &textures)
 	this->shootTimer = this->shootTimerMax;
 	this->damageTimerMax = 40;
 	this->damageTimer = this->damageTimerMax;
+
+	//Inizializzazione achievements
+	this->killSoldier = ks;
+	this->killUfo = ku;
+	this->points = pnts;
 
 	//Frequenza salto.
 	this->jumpTimerMax = 65;
@@ -102,8 +108,8 @@ void Player::takeDamage(int damage)
 
 	this->damageTimer = 0;
 
-	this->currentVelocity.x += -this->normDir.x*10.f;
-	this->currentVelocity.y += -this->normDir.y*10.f;
+	/*this->currentVelocity.x += -this->normDir.x*10.f;
+	this->currentVelocity.y += -this->normDir.y*10.f;*/
 }
 
 //Metodo di movimento del player. 
@@ -208,9 +214,9 @@ void Player::Movement(Vector2u windowBounds,const float &dt)
 	//Check per la collisione con i bounds della finestra
 	
 	//Sinistra
-	if (this->getPosition().x <= 140)
+	if (this->getPosition().x +200 <= 20)
 	{
-		this->sprite.setPosition(140.f, this->sprite.getPosition().y);
+		this->sprite.setPosition(200.f, this->sprite.getPosition().y);
 		this->currentVelocity.x = 0.f;
 	}
 	//Sopra
@@ -220,7 +226,7 @@ void Player::Movement(Vector2u windowBounds,const float &dt)
 		this->currentVelocity.y = 0.f;
 	}
     //Destra
-	else if (this->getPosition().x + this->getGlobalBounds().width >= windowBounds.x)
+	else if (this->getPosition().x + this->getGlobalBounds().width -20 >= windowBounds.x)
 	{
 		this->sprite.setPosition(windowBounds.x - this->getGlobalBounds().width, this->sprite.getPosition().y );
 		this->currentVelocity.x = 0.f;
@@ -245,40 +251,41 @@ void Player::Draw(RenderTarget &target)
     target.draw(this->sprite);
 }
 
-//Metodo riguardante l'attacco del fucile del player (da aggiungere la granata)
+//Metodo riguardante l'attacco del fucile del player 
 void Player::Combat(const float &dt)
 {
 	if (Keyboard::isKeyPressed(Keyboard::A) && this->shootTimer >= this->shootTimerMax)
 	{
+		
 		if (faceRight == true)
 		{
 			if (this->currentWeapon == BULLET1)
 			{
 				//crea i proiettili
-				this->bullets.add(Bullet(bulletTexture, this->playerCenter,
+				this->bullets.add(Bullet(bulletTexture, Vector2f(this->playerCenter.x + 40, this->playerCenter.y ),
 					Vector2f(0.05f, 0.05f),
 					 Vector2f(1.0f, 0.0f), 1.0f, 30.0f, 2.0f));
 			}
 			else if (this->currentWeapon == MISSILE)
 			{
 				//crea i missili
-				this->bullets.add(Bullet(missileTexture, Vector2f(this->playerCenter.x + 40 , this->playerCenter.y + 20),
+				this->bullets.add(Bullet(missileTexture, Vector2f(this->playerCenter.x + 40 , this->playerCenter.y),
 					Vector2f(0.4f, 0.4f),
 					 Vector2f(2.0f, 0.0f), 0.08f, 30.0f, 2.0f));
 			}
 			else if (this->currentWeapon == LASER)
 
 				//crea il laser
-				this->bullets.add(Bullet(laserTexture, Vector2f(this->playerCenter.x + 40, this->playerCenter.y + 20),
+				this->bullets.add(Bullet(laserTexture, Vector2f(this->playerCenter.x + 40, this->playerCenter.y ),
 					Vector2f(1.f, 0.4f),
-					Vector2f(20.0f, 0.0f), 0.08f, 30.0f, 2.0f));
+					Vector2f(20.0f, 0.0f), 0.8f, 40.0f, 2.0f));
 		}
 		else 
 		{
 			if (this->currentWeapon == BULLET1)
 			{
 				//crea i proiettili
-				this->bullets.add(Bullet(bulletTexture, Vector2f(this->playerCenter.x - 140,this->playerCenter.y),
+				this->bullets.add(Bullet(bulletTexture, Vector2f(this->playerCenter.x - 140,this->playerCenter.y + 10),
 					Vector2f(-0.05f, 0.05f),
 					 Vector2f(-1.0f, 0.0f), 1.0f, 30.0f, 2.0f));
 				
@@ -293,9 +300,9 @@ void Player::Combat(const float &dt)
 			else if (this->currentWeapon == LASER)
 
 				//crea il laser
-				this->bullets.add(Bullet(laserTexture, Vector2f(this->playerCenter.x + 40, this->playerCenter.y + 20),
+				this->bullets.add(Bullet(laserTexture, Vector2f(this->playerCenter.x - 140, this->playerCenter.y),
 					Vector2f(1.f, 0.4f),
-					Vector2f(-20.0f, 0.0f), 0.08f, 30.0f, 2.0f));
+					Vector2f(-20.0f, 0.0f), 0.04f, 30.0f, 2.0f));
 		}
 		this->shootTimer = 0;
 	}
@@ -363,4 +370,49 @@ void Player::Update(Vector2u windowBounds,const float &dt)
 
 	this->Movement(windowBounds,dt);
 	this->Combat(dt);
+}
+
+void Player::Notify() const
+{
+	
+	for (auto itr = observer.begin(); itr != observer.end(); ++itr)
+	{
+		(*itr)->Modify(killSoldier, killUfo, points);
+
+	}
+}
+	
+	
+void Player::Attach(Observer *o) 
+{
+		this->observer.push_back(o);
+}
+
+void Player::Detach(Observer *o)
+{
+	
+		this->observer.remove(o);
+	
+}
+	
+		
+		
+void Player::SetKillSoldier() 
+{
+		this->killSoldier += 1;
+		Changed();
+		
+}
+
+void Player::SetKillUfo() 
+{
+		this->killUfo +=1;
+		Changed();
+		
+}
+	
+void Player::SetPoints(int pnts) 
+{
+		this->points = pnts;
+		Changed();
 }

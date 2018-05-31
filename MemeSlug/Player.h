@@ -1,14 +1,17 @@
 #pragma once
+#include "Achievement.h"
 #include"Bullet.h"
+#include"Subject.h"
+#include <list>
 
-class Player 
+class Player : public Subject
 {
 
 public:
 
 	float dtMultiplier;
 
-	Player(std::vector<Texture> &textures);
+	Player(std::vector<Texture> &textures, int ks, int ku, int pnts);
 	virtual ~Player();
 
 	//Bullets del player.
@@ -42,6 +45,15 @@ public:
 	void Update(Vector2u windowBounds, const float &dt);
 	void Movement(Vector2u windowBounds,const float &dt);
 	void Combat(const float &dt);
+
+	//Funzioni Achievements
+	virtual void Notify()const;
+	virtual void Attach(Observer*o)override;
+	virtual void Detach(Observer*o)override;
+	void Changed() { Notify(); };
+	void SetKillSoldier();
+	void SetKillUfo();
+	void SetPoints(int pnts);
     
 
 	FloatRect playerBounds;
@@ -94,6 +106,13 @@ private:
 	Texture *missileTexture;
 	Texture *laserTexture;
 	dArr<Bullet> bullets;
+	
+
+	//Observer 
+	std::list<Observer*>observer;
+	int killSoldier;
+	int killUfo;
+	int points;
 	
 	//Attributi mappa. (temporanei)
     const float ground = 700.0f;

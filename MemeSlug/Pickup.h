@@ -1,17 +1,5 @@
 #pragma once
-#include <SFML/Graphics.hpp>
-#include <SFML/Audio.hpp>
-#include <SFML\System.hpp>
-#include <iostream>
-#include <vector>
-#include <cstdlib>
-#include <stdlib.h>
-#include <math.h>
-#include <fstream>
-#include "dArr.h"
-#include <list>
-
-using namespace sf;
+#include "Achievement.h"
 
 class Pickup
 {

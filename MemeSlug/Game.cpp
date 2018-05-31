@@ -2,8 +2,12 @@
 
 enum textures { player = 0, bullet1, missile, laser };
 
-Game::Game(RenderWindow *window)
+Game::Game(RenderWindow *window) 
+
 {
+	this->InitTextures();
+
+	
 	//Inizializzazione del gioco
 	this->window = window;
 	this->window->setFramerateLimit(60);
@@ -18,23 +22,34 @@ Game::Game(RenderWindow *window)
 	this->multiplierTimerMax = 400.f;
 	this->multiplierTimer = this->multiplierTimerMax;
 	this->paused = true;
-	
 
-	this->InitTextures();
+	
+	
 	
 	
 	//Inizializzazione dei fonts (UI ancora da implementare)
 	this->font.loadFromFile("Fonts/Flighter_PERSONAL_USE_ONLY.ttf"); 
-
+	this->font1.loadFromFile("Fonts/Fipps-Regular.otf");
 
 	//Creazione del player
-	this->players.add(Player(this->textures));
+	this->players.add(Player(this->textures, 0, 0 ,0));
 
+
+    //Associazione degli achievements al player 
+	this->achievements.push_back(Achievements(&players[0]));
+	
+		
+	this->enemiesAlive = 0;
 	this->enemySpawnTimerMax = 200;
 	this->enemySpawnTimer = this->enemySpawnTimerMax;
 
 	//Init bosses
 	this->bossEncounter = false;
+
+	this->soldierKilled = 0;
+	this->ufoKilled = 0;
+	this->AchievementTimerMax = 300000000; 
+	this->AchievementTimer = 0;
 
 
 
@@ -114,10 +129,10 @@ void Game:: InitUI()
 	this->gameOverText.setCharacterSize(40);
 	this->gameOverText.setString(
 		std::string("YOU DIED!"));
-	this->gameOverText.setPosition(this->window->getSize().x / 2 - 290, this->window->getSize().y / 2 - 400);
+	this->gameOverText.setPosition(this->window->getSize().x / 2 , this->window->getSize().y / 2 );
 
 	//Score
-	this->scoreText.setFont(this->font);
+	this->scoreText.setFont(this->font1);
 	this->scoreText.setFillColor(Color(200, 200, 200, 150));
 	this->scoreText.setCharacterSize(25);
 	this->scoreText.setString("Score : 0");
@@ -131,6 +146,29 @@ void Game:: InitUI()
 		"A: SHOOT\nRIGHT ARROW: RIGHT\nLEFT ARROW: LEFT \nUP ARROW: JUMP \nP: PAUSE/CONTROLS (START GAME)\nESC: QUIT\nWARNING, SCORE-TIMER DOES NOT STOP WHEN PAUSED!"
 	);
 	this->controlsText.setPosition(50.f, 400.f);
+
+	//Achievements
+
+	//Achievement per aver ucciso i soldati 
+	this->killSoldierText.setFont(this->font1);
+	this->killSoldierText.setFillColor(Color::Green);
+	this->killSoldierText.setCharacterSize(20);
+	this->killSoldierText.setString("");
+	this->killSoldierText.setPosition(1000.f, 20.f);
+	
+	//Achievement per aver ucciso gli ufo
+	this->killUfoText.setFont(this->font1);
+	this->killUfoText.setFillColor(Color::Green);
+	this->killUfoText.setCharacterSize(20);
+	this->killUfoText.setString("");
+	this->killUfoText.setPosition(1000.f, 20.f);
+	
+	//Achievement per lo score
+	this->pointsText.setFont(this->font1);
+	this->pointsText.setFillColor(Color::Green);
+	this->pointsText.setCharacterSize(20);
+	this->pointsText.setString("");
+	this->pointsText.setPosition(1000.f, 40.f);
 
 }
 
@@ -155,9 +193,57 @@ void Game::DrawUI()
 	//Menù
 	if (this->paused)
 		this->window->draw(this->controlsText);
+
+	
+	//Achievements
+	if (this->soldierKilled == 3)
+	{
+		this->killSoldierText.setString(std::string("Morirete tutti!"));
+		this->window->draw(this->killSoldierText);
+
+		if (this->AchievementTimer < this->AchievementTimerMax)
+		{
+			this->AchievementTimer += 1.f*this->dtMultiplier;
+		}
+		else
+		{
+			this->killSoldierText.setFillColor(Color::Transparent);
+		}
+	}
+
+	if (this->ufoKilled == 1)
+	{
+		this->killUfoText.setString(std::string("Giro sull'ottovolante"));
+		this->window->draw(this->killUfoText);
+
+		if (this->AchievementTimer < this->AchievementTimerMax)
+		{
+			this->AchievementTimer += 1.f*this->dtMultiplier;
+		}
+		else
+		{
+			this->killUfoText.setFillColor(Color::Transparent);
+		}
+
+	}
+
+	if (this->score >= 20 && this->score <= 30)
+	{
+		this->pointsText.setString(std::string("Vacci piano"));
+		this->window->draw(this->pointsText);
+
+		if (this->AchievementTimer < this->AchievementTimerMax)
+		{
+			this->AchievementTimer += 1.f*this->dtMultiplier;
+		}
+		else
+		{
+			this->pointsText.setFillColor(Color::Transparent);
+		}
+	}
+
+
 }
-
-
 
 
 //Update del game, si occupa di aggiornare le posizioni di players e bullets.
@@ -184,7 +270,7 @@ void Game::Update(const float &dt)
 		if (this->players.size() > 0 && !this->paused)
 		{
 
-			int h = 0;
+			
 			//Update timers
 			if (this->enemySpawnTimer < this->enemySpawnTimerMax)
 				this->enemySpawnTimer += 1.f* dt * this->dtMultiplier;
@@ -208,25 +294,29 @@ void Game::Update(const float &dt)
 
 
 			//Enemies spawn
-			if (this->enemySpawnTimer >= this->enemySpawnTimerMax)
+			if (this->enemySpawnTimer >= this->enemySpawnTimerMax && this->enemiesAlive <=5)
 			{
 				this->enemies.add(Enemy(this->enemyTextures, this->enemyBulletTextures,
-					this->window->getSize(), Vector2f(rand() % this->window->getSize().x, 800.f),
+					this->window->getSize(), Vector2f(rand() % this->window->getSize().x, 670.f),
 					Vector2f(-1.f, 0.f), Vector2f(1.3f, 1.3f),
-					0, 5, 3, 1, 0));
+					0, 5, 3, 1, 0, move));
+				this->enemiesAlive++;
+				
 
 				this->enemies.add(Enemy(this->enemyTextures, this->enemyBulletTextures,
 					this->window->getSize(), Vector2f(rand() % this->window->getSize().x + 800, rand() % this->window->getSize().y - 500),
 					Vector2f(-1.f, 0.f), Vector2f(0.15f, 0.15f),
-					1, 5, 3, 1, 0));
+					1, 5, 3, 1, 0, move));
+				this->enemiesAlive++;
 
 				this->enemies.add(Enemy(this->enemyTextures, this->enemyBulletTextures,
-					this->window->getSize(), Vector2f(rand() % this->window->getSize().x, 730.f),
+					this->window->getSize(), Vector2f(rand() % this->window->getSize().x, 600.f),
 					Vector2f(-1.f, 0.f), Vector2f(0.28f, 0.28f),
-					2, 5, 3, 1, 0));
-
+					2, 5, 3, 1, 0, move));
+				this->enemiesAlive++;
 
 				this->enemySpawnTimer = 0;
+				
 			}
 
 			for (size_t i = 0; i < players.size(); i++)
@@ -280,20 +370,61 @@ void Game::Update(const float &dt)
 										if (dropChance > 8)
 										{
 											this->pickups.add(Pickup(this->pickupTextures,
-												Vector2f(this->enemies[j].getPosition().x, 800.f), Vector2f(0.3f, 0.3f),
-												0, 600.f));
+												Vector2f(this->enemies[j].getPosition().x, 670.f), Vector2f(0.3f, 0.3f),
+												0, 800.f));
 										}
 										else if (dropChance > 5)
 										{
 											this->pickups.add(Pickup(this->pickupTextures,
-												Vector2f(this->enemies[j].getPosition().x, 810.f), Vector2f(0.12f, 0.12f),
-												1, 600.f));
+												Vector2f(this->enemies[j].getPosition().x, 670.f), Vector2f(0.12f, 0.12f),
+												1, 800.f));
 
 										}
 									}
 
+									switch (enemies[j].getType()) 
+									{
+									case 0: 
 
-									this->enemies.remove(j);
+										this->soldierKilled++;
+										this->enemies.remove(j);
+										this->enemiesAlive--;
+								
+
+										DrawUI();
+
+									    break; 
+									
+									case 1: 
+										
+										this->enemies.remove(j);
+										this->ufoKilled++;
+										this->enemiesAlive--;
+									
+
+										DrawUI();
+
+										break; 
+									
+									case 2: 
+
+										this->soldierKilled++;
+										this->enemies.remove(j);
+										this->enemiesAlive--;
+								
+										
+
+										DrawUI();
+
+										break; 
+									
+									default: 
+										break; 
+
+									}
+									
+									this->players[i].SetKillSoldier();
+									
 
 									
 								}
@@ -325,6 +456,9 @@ void Game::Update(const float &dt)
 					"\nNew Multiplier : " + std::to_string(this->multiplierAdder) + " / " +
 					std::to_string(this->multiplierAdderMax));
 
+				DrawUI();
+				
+
 
 			}
 
@@ -333,6 +467,7 @@ void Game::Update(const float &dt)
 				//Update enemies.
 				for (size_t i = 0; i < this->enemies.size(); i++)
 				{
+					
 					this->enemies[i].Update(dt, this->players[this->enemies[i].getPlayerFollowNr()].getPosition());
 
 					//Update dei proiettili del nemico.
@@ -425,6 +560,8 @@ void Game::Update(const float &dt)
 						"\n" + "\n Press F1 to RESTART")
 				);
 
+				
+
 							
 				//Restart
 				if (Keyboard::isKeyPressed(Keyboard::F1))
@@ -434,7 +571,6 @@ void Game::Update(const float &dt)
 						this->players[i].Reset();
 					}
 
-
 					this->runGame = true;
 					this->score = 0;
 					this->scoreMultiplier = 1;
@@ -442,6 +578,7 @@ void Game::Update(const float &dt)
 					this->scoreTime = 0;
 					this->bossEncounter = false;
 					this->enemySpawnTimerMax = 200.f; 
+					this->enemiesAlive = 0;
 					this->scoreTimer.restart();
 					this->enemies.clear();
 					this->pickups.clear();

@@ -2,6 +2,9 @@
 #include "Player.h"
 #include "Enemy.h"
 #include"Boss.h"
+#include "Achievement.h"
+
+
 
 
 class Game
@@ -49,10 +52,21 @@ private:
 
 	//Text
 	Font font;
+	Font font1;
 	Text staticPlayerText;
 	Text gameOverText;
 	Text scoreText;
 	Text controlsText;
+
+	//Achievemnts texts
+	Text killSoldierText;
+	Text killUfoText;
+	Text pointsText;
+	float AchievementTimer;
+	float AchievementTimerMax;
+	int soldierKilled; 
+	int ufoKilled;
+	
 
 	//Players
 	dArr<Player> players;
@@ -69,6 +83,15 @@ private:
 	std::vector<Enemy> enemiesSaved;
 	float enemySpawnTimer;
 	float enemySpawnTimerMax;
+	int enemiesAlive;
+
+	//Achievements
+     std::vector <Achievements> achievements;
+
+	 //Strategy
+	 StrategyMove* move;
+	
+	
 
 
 	//Textures

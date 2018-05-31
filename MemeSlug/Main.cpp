@@ -1,8 +1,9 @@
 #include "Game.h"
 
+
 int main()
 {
-	RenderWindow window(VideoMode(1920, 1080), "MemeSlug", Style::Default);
+	RenderWindow window(VideoMode(1366, 768), "MemeSlug", Style::Default);
 
 	Clock clock;
 	float dt = 0.0f;

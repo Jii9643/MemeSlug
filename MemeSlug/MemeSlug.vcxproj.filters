@@ -36,6 +36,9 @@
     <ClCompile Include="Boss.cpp">
       <Filter>File di origine</Filter>
     </ClCompile>
+    <ClCompile Include="Achievement.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -57,6 +60,27 @@
       <Filter>File di intestazione</Filter>
     </ClInclude>
     <ClInclude Include="Boss.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="Observer.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="Subject.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="Achievement.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="DisplayElement.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="StrategyMove.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="StrategyR.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="StrategyL.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
   </ItemGroup>
