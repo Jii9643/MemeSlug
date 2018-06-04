@@ -3,6 +3,7 @@
 #include "Enemy.h"
 #include"Boss.h"
 #include "Achievement.h"
+#include "Map.h"
 
 
 
@@ -25,8 +26,12 @@ public:
 	void Draw();
 	void InitTextures();
 
+	//Funzioni Mappa
+	void InitMap();
+	void InitMapTextures();
 
-	//Funzioni per l'interfaccia utente (ancora non implementate)
+
+	//Funzioni per l'interfaccia utente 
 	void UpdateUI();
 	void InitUI();
 	void DrawUI();
@@ -91,7 +96,9 @@ private:
 	 //Strategy
 	 StrategyMove* move;
 	
-	
+	//Map
+	 Map map;
+	 dArr<Tile> tiles;
 
 
 	//Textures

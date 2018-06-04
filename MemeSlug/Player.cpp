@@ -19,7 +19,7 @@ Player::Player(std::vector<Texture> &textures, int ks, int ku, int pnts)
 
     this->sprite.setTexture(textures[0]);
 	this->sprite.setScale(0.119f, 0.119f);
-	this->sprite.setPosition(300.0f, 700.0f);
+	this->sprite.setPosition(300.0f, 600.0f);
 	this->playerBounds = this->sprite.getLocalBounds();
 	this->hp = this->hpMax;
 	
@@ -232,7 +232,7 @@ void Player::Movement(Vector2u windowBounds,const float &dt)
 		this->currentVelocity.x = 0.f;
 	}
 	//Sotto
-	else if (this->getPosition().y + this->getGlobalBounds().height >= windowBounds.y)
+	else if (this->getPosition().y + this->getGlobalBounds().height -200 >= windowBounds.y)
 	{
 		this->sprite.setPosition(this->sprite.getPosition().x , windowBounds.y - this->getGlobalBounds().height);
 		this->currentVelocity.y = 0.f;
@@ -345,7 +345,7 @@ void Player::Reset()
 {
 	this->hpMax = 5;
 	this->hp = this->hpMax;
-	this->sprite.setPosition(Vector2f(300.f, 700.f));
+	this->sprite.setPosition(Vector2f(300.f, 600.f));
 	this->bullets.clear();
 	this->piercingShot = false;
 	this->currentVelocity.x = 0;

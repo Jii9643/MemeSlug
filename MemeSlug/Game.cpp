@@ -5,7 +5,7 @@ enum textures { player = 0, bullet1, missile, laser };
 Game::Game(RenderWindow *window) 
 
 {
-	this->InitTextures();
+	
 
 	
 	//Inizializzazione del gioco
@@ -23,7 +23,10 @@ Game::Game(RenderWindow *window)
 	this->multiplierTimer = this->multiplierTimerMax;
 	this->paused = true;
 
-	
+	this->InitTextures();
+	this->InitMap();
+	this->InitUI();
+
 	
 	
 	
@@ -51,9 +54,6 @@ Game::Game(RenderWindow *window)
 	this->AchievementTimerMax = 300000000; 
 	this->AchievementTimer = 0;
 
-
-
-	this->InitUI();
 	
 }
 
@@ -67,6 +67,8 @@ Game::~Game()
 
 void Game::InitTextures()
 {
+	this->InitMapTextures();
+
 	//Inizializzazione delle textures
 	this->textures.push_back(Texture());
 	this->textures[player].loadFromFile("Textures/TarmaPlayer.png");
@@ -107,8 +109,16 @@ void Game::InitTextures()
 	temp.loadFromFile("Textures/Box1.png");
 	this->bossBulletTextures.add(Texture(temp));
 
+	
+}
+
+void Game::InitMapTextures()
+{
+
+	Tile::tileTextures.loadFromFile("Textures/textureSheetMap.png");
 
 }
+
 
 void Game:: InitUI()
 {
@@ -170,6 +180,13 @@ void Game:: InitUI()
 	this->pointsText.setString("");
 	this->pointsText.setPosition(1000.f, 40.f);
 
+}
+
+void Game::InitMap()
+{
+	Tile tile(IntRect(0, 0, 50, 50), Vector2f(200.f, 300.f), true, false);
+
+	this->tiles.add(tile);
 }
 
 void Game:: UpdateUI()
@@ -326,6 +343,20 @@ void Game::Update(const float &dt)
 					//Update player.
 					this->players[i].Player::Update(this->window->getSize(), dt);
 
+					//Collisione con la mappa
+					/*for (size_t k = 0; k < this->walls.size(); k++)
+					{
+						if (this->players[i].getGlobalBounds().intersects(this->walls[k].getGlobalBounds()))
+						{
+							while (this->players[i].getGlobalBounds().intersects(this->walls[k].getGlobalBounds()))
+							{
+								this->players[i].move(
+									20.f* -1.f * this->players[i].getNormDir().x,
+								    20.f* -1.f * this->players[i].getNormDir().y);
+							}
+							this->players[i].resetVelocity();
+						}
+					}*/
 
 					//Update Bullets
 					for (size_t k = 0; k < this->players[i].getBulletsSize(); k++)
@@ -608,6 +639,12 @@ void Game::Draw()
 		this->enemies[i].Draw(*this->window);
 	}
 
+	//Map
+	for (size_t i = 0; i < this->tiles.size(); i++)
+	{
+		this->tiles[i].Draw(*this->window);
+	}
+
 	//Draw pickups.
 	for (size_t i = 0; i < this->pickups.size(); i++)
 	{
@@ -615,6 +652,7 @@ void Game::Draw()
 	
 	}
 
+	
 
 	this->DrawUI();
 

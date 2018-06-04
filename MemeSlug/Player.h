@@ -37,7 +37,9 @@ public:
 	inline void enablePiercingShot() { this->piercingShot = true; }
 	inline void disablePiercingShot() { this->piercingShot = false; }
 	inline bool getPiercingShot() const { return this->piercingShot; }
-
+	inline const Vector2f& getNormDir()const { return this->normDir; }
+	inline void move(float x, float y) { this->sprite.move(x, y);}
+	inline void resetVelocity() { this->currentVelocity = Vector2f(0.f, 0.f); }
 
 	//Funzioni 
 	void Reset();
@@ -115,7 +117,7 @@ private:
 	int points;
 	
 	//Attributi mappa. (temporanei)
-    const float ground = 700.0f;
+    const float ground = 600.0f;
 	const float gravitySpeed = 10.0;
 
 	//Timing riguardante il rate dei bullets.

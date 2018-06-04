@@ -28,7 +28,6 @@ int main()
 		dt = clock.restart().asSeconds();
 		
 
-
         game.Update(dt);
 		game.Draw();
 	}

@@ -14,8 +14,8 @@
 #include "Subject.h"
 #include "DisplayElement.h"
 
-
 using namespace sf;
+
 
 class Achievements : public Observer, private DisplayElement
 {
