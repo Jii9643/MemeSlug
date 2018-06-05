@@ -20,6 +20,7 @@ public:
 	inline const int getBulletsSize() const { return this->bullets.size(); }
 
 	//Funzioni inline
+	inline const float& getPositionX() const { return this->sprite.getPosition().x; }
 	inline const Vector2f& getPosition() const { return this->sprite.getPosition(); }
 	int getDamage() const;
 	inline FloatRect getGlobalBounds() const { return this->sprite.getGlobalBounds(); }
@@ -39,7 +40,7 @@ public:
 	inline bool getPiercingShot() const { return this->piercingShot; }
 	inline const Vector2f& getNormDir()const { return this->normDir; }
 	inline void move(float x, float y) { this->sprite.move(x, y);}
-	inline void resetVelocity() { this->currentVelocity = Vector2f(0.f, 0.f); }
+
 
 	//Funzioni 
 	void Reset();
@@ -57,6 +58,7 @@ public:
 	void SetKillUfo();
 	void SetPoints(int pnts);
     
+	void blockCollision(Vector2f blockPosition, const float &dt);
 
 	FloatRect playerBounds;
 
@@ -95,7 +97,6 @@ private:
 
     float maxVelocity;
 	float acceleration;
-	float jumpHeight;
 	int speed;
 	float stabilizerForce;
 	Vector2f movementDirection;

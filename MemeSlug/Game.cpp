@@ -5,6 +5,8 @@ enum textures { player = 0, bullet1, missile, laser };
 Game::Game(RenderWindow *window) 
 
 {
+	this->InitTextures();
+
 	
 
 	
@@ -23,10 +25,7 @@ Game::Game(RenderWindow *window)
 	this->multiplierTimer = this->multiplierTimerMax;
 	this->paused = true;
 
-	this->InitTextures();
-	this->InitMap();
-	this->InitUI();
-
+	
 	
 	
 	
@@ -51,10 +50,14 @@ Game::Game(RenderWindow *window)
 
 	this->soldierKilled = 0;
 	this->ufoKilled = 0;
-	this->AchievementTimerMax = 300000000; 
+	this->AchievementTimerMax = 3; 
 	this->AchievementTimer = 0;
 
-	
+
+	//Creazione mappa
+	this->CreateMap();
+	this->InitUI();
+	this->InitMap();
 }
 
 
@@ -67,8 +70,6 @@ Game::~Game()
 
 void Game::InitTextures()
 {
-	this->InitMapTextures();
-
 	//Inizializzazione delle textures
 	this->textures.push_back(Texture());
 	this->textures[player].loadFromFile("Textures/TarmaPlayer.png");
@@ -78,6 +79,7 @@ void Game::InitTextures()
 	this->textures[missile].loadFromFile("Textures/missile.png");
 	this->textures.push_back(Texture());
 	this->textures[laser].loadFromFile("Textures/Laser.png");
+	
 
 	Texture temp;
 
@@ -109,16 +111,13 @@ void Game::InitTextures()
 	temp.loadFromFile("Textures/Box1.png");
 	this->bossBulletTextures.add(Texture(temp));
 
-	
-}
+	temp.loadFromFile("Textures/GrassMap.png");
+	this->mapTextures.add(Texture(temp));
 
-void Game::InitMapTextures()
-{
 
-	Tile::tileTextures.loadFromFile("Textures/textureSheetMap.png");
+
 
 }
-
 
 void Game:: InitUI()
 {
@@ -184,9 +183,20 @@ void Game:: InitUI()
 
 void Game::InitMap()
 {
-	Tile tile(IntRect(0, 0, 50, 50), Vector2f(200.f, 300.f), true, false);
+	RectangleShape temp;
+	temp.setSize(Vector2f(100000.f, 10.f));
+	temp.setFillColor(Color::White);
+	temp.setPosition(0.f, 750.f);
 
-	this->tiles.add(tile);
+	
+	//Background
+	if (!backgroundTexture.loadFromFile("Textures/Background.png"))
+	{
+	}
+	this->backgroundSprite.setTexture(this->backgroundTexture);
+	this->backgroundSprite.setScale(3.5f, 3.5f);
+	this->backgroundSprite.setPosition(0.f, -50.f);
+	this->backgroundSprite.setColor(Color(255,255,255,150));
 }
 
 void Game:: UpdateUI()
@@ -203,6 +213,7 @@ void Game::DrawUI()
 		this->window->draw(this->gameOverText);
 	}
 
+	
 	//Score 
 	this->window->draw(this->scoreText);
 
@@ -266,7 +277,7 @@ void Game::DrawUI()
 //Update del game, si occupa di aggiornare le posizioni di players e bullets.
 void Game::Update(const float &dt)
 {
-
+	
 	//Keytime update
 	if (this->keyTime < this->keyTimeMax)
 		this->keyTime += 1.f * dt * this->dtMultiplier;
@@ -286,7 +297,7 @@ void Game::Update(const float &dt)
          //Inizio Game
 		if (this->players.size() > 0 && !this->paused)
 		{
-
+			
 			
 			//Update timers
 			if (this->enemySpawnTimer < this->enemySpawnTimerMax)
@@ -344,19 +355,16 @@ void Game::Update(const float &dt)
 					this->players[i].Player::Update(this->window->getSize(), dt);
 
 					//Collisione con la mappa
-					/*for (size_t k = 0; k < this->walls.size(); k++)
+					for (size_t k = 0; k < this->blocks.size(); k++)
 					{
-						if (this->players[i].getGlobalBounds().intersects(this->walls[k].getGlobalBounds()))
+						/*if (this->players[i].getGlobalBounds().intersects(this->blocks[k].getGlobalBounds()))
 						{
-							while (this->players[i].getGlobalBounds().intersects(this->walls[k].getGlobalBounds()))
-							{
-								this->players[i].move(
-									20.f* -1.f * this->players[i].getNormDir().x,
-								    20.f* -1.f * this->players[i].getNormDir().y);
-							}
-							this->players[i].resetVelocity();
-						}
-					}*/
+						
+						
+						}*/
+						//this->players[i].blockCollision(blocks[k].getPosition(), dt);
+					/*	std::cout << "\n" << blocks[k].getPosition().y;*/
+					}
 
 					//Update Bullets
 					for (size_t k = 0; k < this->players[i].getBulletsSize(); k++)
@@ -619,14 +627,16 @@ void Game::Update(const float &dt)
 			}
 		}
 		this->UpdateUI();
-
+	
 }
 
 //Disegnare a schermo players, boxes e bullets. 
 void Game::Draw()
 {
+	
 	this->window->clear();
 	
+	window->draw(backgroundSprite);
 	//Draw players.
 	for (size_t i = 0; i < this->players.size(); i++)
 	{
@@ -640,9 +650,9 @@ void Game::Draw()
 	}
 
 	//Map
-	for (size_t i = 0; i < this->tiles.size(); i++)
+	for (size_t i = 0; i < this->blocks.size(); i++)
 	{
-		this->tiles[i].Draw(*this->window);
+		this->blocks[i].Draw(*this->window);
 	}
 
 	//Draw pickups.
@@ -653,10 +663,18 @@ void Game::Draw()
 	}
 
 	
-
 	this->DrawUI();
-
 	this->window->display();
 
 }
 
+
+void Game::CreateMap()
+{
+	for (float i = 0.f; i < 1500.f; i +=150.f)
+	{
+		this->blocks.add(Map(this->mapTextures, Vector2f(i, 680.f),
+			Vector2f(0.5f, 0.5f), this->window->getSize(), 0));
+	}
+	
+}

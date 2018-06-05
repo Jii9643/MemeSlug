@@ -1,21 +1,5 @@
 #pragma once
-#include <SFML/Graphics.hpp>
-#include <SFML/Audio.hpp>
-#include <SFML\System.hpp>
-#include <iostream>
-#include <vector>
-#include <cstdlib>
-#include <stdlib.h>
-#include <math.h>
-#include <fstream>
-#include "dArr.h"
-#include <list>
-#include "Observer.h"
-#include "Subject.h"
-#include "DisplayElement.h"
-
-using namespace sf;
-
+#include "Map.h"
 
 class Achievements : public Observer, private DisplayElement
 {

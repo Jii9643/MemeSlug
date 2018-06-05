@@ -8,12 +8,14 @@ int main()
 	Clock clock;
 	float dt = 0.0f;
 
+	
 	Game game(&window);
 
 	//Game loop
 	while (window.isOpen())
 	{
 		
+	
 		Event event;
 		while (window.pollEvent(event))
 		{
@@ -28,8 +30,12 @@ int main()
 		dt = clock.restart().asSeconds();
 		
 
+
         game.Update(dt);
 		game.Draw();
+
+
+
 	}
 
 	return 0;

@@ -6,20 +6,20 @@ unsigned Player::players = 0;
 enum weapons{BULLET1 = 0, MISSILE, LASER};
 
 
+
 Player::Player(std::vector<Texture> &textures, int ks, int ku, int pnts)
-	: hpMax(50), damage(1), score(0), jumpHeight(40)
+	: hpMax(50), damage(1), score(0)
 {
 	
 	this->dtMultiplier = 60.f;
 
-	this->jumpHeight = jumpHeight;
 	this->faceRight = true;
 
 	//Inizializzazione texture del player.
 
     this->sprite.setTexture(textures[0]);
 	this->sprite.setScale(0.119f, 0.119f);
-	this->sprite.setPosition(300.0f, 600.0f);
+	this->sprite.setPosition(300.0f, 200.0f);
 	this->playerBounds = this->sprite.getLocalBounds();
 	this->hp = this->hpMax;
 	
@@ -108,14 +108,14 @@ void Player::takeDamage(int damage)
 
 	this->damageTimer = 0;
 
-	/*this->currentVelocity.x += -this->normDir.x*10.f;
-	this->currentVelocity.y += -this->normDir.y*10.f;*/
 }
 
 //Metodo di movimento del player. 
 void Player::Movement(Vector2u windowBounds,const float &dt)
 {
 	//Update di normDir
+	if (this->sprite.getPosition().y < 580)
+	this->sprite.move(0.f, gravitySpeed);
 
 	this->normDir = normalize(this->currentVelocity, vectorLength(this->currentVelocity));
 	
@@ -124,9 +124,11 @@ void Player::Movement(Vector2u windowBounds,const float &dt)
 
 	if (Keyboard::isKeyPressed(Keyboard::Left))
 	{
+	
 		faceRight = false;
 		this->direction.x = -1.0f;
 		this->direction.y = 0.0f;
+
 		//Per fare il flip della sprite.
 		this->sprite.setScale(-0.119f, 0.119f);
 
@@ -136,6 +138,7 @@ void Player::Movement(Vector2u windowBounds,const float &dt)
 	}
 	if (Keyboard::isKeyPressed(Keyboard::Right))
 	{
+		
 		faceRight = true;
 		this->direction.x = 1.0f;
 		this->direction.y = 0.0f;
@@ -155,23 +158,16 @@ void Player::Movement(Vector2u windowBounds,const float &dt)
 
     	if (this->currentVelocity.y > -this->maxVelocity && this->direction.y < 0)
 		{
-			this->currentVelocity.y += this->direction.y * this->acceleration;
+			this->currentVelocity.y = this->direction.y * this->acceleration * dt * this->dtMultiplier;
 
 		}
-
+		
 		this->jumpTimer = 0;
 		
 	}
 	
-
-	if (this->sprite.getPosition().y < ground)
-	{
-		this->sprite.move(0.0f, gravitySpeed);
-	}
 	
 
-
-	
 
 	//Attrito.
 	if (this->currentVelocity.x > 0)
@@ -358,6 +354,9 @@ void Player::Reset()
 
 void Player::Update(Vector2u windowBounds,const float &dt)
 {
+	std::cout << "\n" << currentVelocity.x;
+
+	std::cout << "\n" << currentVelocity.y;
 
     if (this->shootTimer < this->shootTimerMax)
 		this->shootTimer += 1.f * dt * this->dtMultiplier;
@@ -415,4 +414,13 @@ void Player::SetPoints(int pnts)
 {
 		this->points = pnts;
 		Changed();
+}
+
+void Player::blockCollision(Vector2f blockPosition, const float &dt)
+{
+	//Sotto
+   if (this->sprite.getPosition().y <= blockPosition.y -120 )
+   {
+	   this->sprite.move(0.f, gravitySpeed);
+   }
 }

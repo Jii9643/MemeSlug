@@ -8,6 +8,7 @@
 
 
 
+
 class Game
 {
 public:
@@ -28,10 +29,10 @@ public:
 
 	//Funzioni Mappa
 	void InitMap();
-	void InitMapTextures();
+	void CreateMap();
 
 
-	//Funzioni per l'interfaccia utente 
+	//Funzioni per l'interfaccia utente (ancora non implementate)
 	void UpdateUI();
 	void InitUI();
 	void DrawUI();
@@ -97,9 +98,8 @@ private:
 	 StrategyMove* move;
 	
 	//Map
-	 Map map;
-	 dArr<Tile> tiles;
-
+	 dArr <Map> blocks;
+	
 
 	//Textures
 	std::vector<Texture> textures;
@@ -116,5 +116,12 @@ private:
 	dArr<Texture> bossGunTextures;
 	dArr<Texture> bossBulletTextures;
 
+	//Map Textures
+	dArr <Texture> mapTextures;
 
+	//Background
+	Sprite backgroundSprite; 
+	Texture backgroundTexture;
+
+	
 };
