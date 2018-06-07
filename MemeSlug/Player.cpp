@@ -42,7 +42,7 @@ Player::Player(std::vector<Texture> &textures, int ks, int ku, int pnts)
 	this->points = pnts;
 
 	//Frequenza salto.
-	this->jumpTimerMax = 65;
+	this->jumpTimerMax = 70;
 	this->jumpTimer = this->jumpTimerMax;
 
 	//Velocità, accelerazione e attrito. 
@@ -114,9 +114,6 @@ void Player::takeDamage(int damage)
 void Player::Movement(Vector2u windowBounds,const float &dt)
 {
 	//Update di normDir
-	if (this->sprite.getPosition().y < 580)
-	this->sprite.move(0.f, gravitySpeed);
-
 	this->normDir = normalize(this->currentVelocity, vectorLength(this->currentVelocity));
 	
 
@@ -163,11 +160,22 @@ void Player::Movement(Vector2u windowBounds,const float &dt)
 		}
 		
 		this->jumpTimer = 0;
-		
+	
 	}
 	
-	
 
+	if (this->sprite.getPosition().y < 680)
+		this->sprite.move(0.f, gravitySpeed);
+	if (this->sprite.getPosition().x < -100) 
+	{
+		this->sprite.setPosition(-100.f, this->sprite.getPosition().y);
+		this->currentVelocity.x = 0.f;
+	}
+	if (this->sprite.getPosition().x > +1000)
+	{
+		this->sprite.setPosition(1000, this->sprite.getPosition().y);
+		this->currentVelocity.x = 0.f;
+	}
 
 	//Attrito.
 	if (this->currentVelocity.x > 0)
@@ -209,31 +217,31 @@ void Player::Movement(Vector2u windowBounds,const float &dt)
 
 	//Check per la collisione con i bounds della finestra
 	
-	//Sinistra
-	if (this->getPosition().x +200 <= 20)
-	{
-		this->sprite.setPosition(200.f, this->sprite.getPosition().y);
-		this->currentVelocity.x = 0.f;
-	}
-	//Sopra
-	else if (this->getPosition().y <= 0)
-	{
-		this->sprite.setPosition(this->sprite.getPosition().x, 0.f);
-		this->currentVelocity.y = 0.f;
-	}
-    //Destra
-	else if (this->getPosition().x + this->getGlobalBounds().width -20 >= windowBounds.x)
-	{
-		this->sprite.setPosition(windowBounds.x - this->getGlobalBounds().width, this->sprite.getPosition().y );
-		this->currentVelocity.x = 0.f;
-	}
-	//Sotto
-	else if (this->getPosition().y + this->getGlobalBounds().height -200 >= windowBounds.y)
-	{
-		this->sprite.setPosition(this->sprite.getPosition().x , windowBounds.y - this->getGlobalBounds().height);
-		this->currentVelocity.y = 0.f;
-	}
-	
+	////Sinistra
+	//if (this->getPosition().x +200 <= 20)
+	//{
+		/*this->sprite.setPosition(200.f, this->sprite.getPosition().y);
+		this->currentVelocity.x = 0.f;*/
+	//}
+	////Sopra
+	//else if (this->getPosition().y <= 0)
+	//{
+	//	this->sprite.setPosition(this->sprite.getPosition().x, 0.f);
+	//	this->currentVelocity.y = 0.f;
+	//}
+ //   //Destra
+	//else if (this->getPosition().x + this->getGlobalBounds().width -20 >= windowBounds.x)
+	//{
+	//	this->sprite.setPosition(windowBounds.x - this->getGlobalBounds().width, this->sprite.getPosition().y );
+	//	this->currentVelocity.x = 0.f;
+	//}
+	////Sotto
+	//else if (this->getPosition().y + this->getGlobalBounds().height -200 >= windowBounds.y)
+	//{
+	//	this->sprite.setPosition(this->sprite.getPosition().x , windowBounds.y - this->getGlobalBounds().height);
+	//	this->currentVelocity.y = 0.f;
+	//}
+	//
 
 }
 
@@ -245,6 +253,7 @@ void Player::Draw(RenderTarget &target)
 		this->bullets[i].Draw(target);
 	}
     target.draw(this->sprite);
+
 }
 
 //Metodo riguardante l'attacco del fucile del player 
@@ -354,9 +363,7 @@ void Player::Reset()
 
 void Player::Update(Vector2u windowBounds,const float &dt)
 {
-	std::cout << "\n" << currentVelocity.x;
-
-	std::cout << "\n" << currentVelocity.y;
+	
 
     if (this->shootTimer < this->shootTimerMax)
 		this->shootTimer += 1.f * dt * this->dtMultiplier;

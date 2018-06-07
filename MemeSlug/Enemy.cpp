@@ -115,6 +115,9 @@ void Enemy::Update(const float &dt, Vector2f playerPosition)
 	{
 	case SimpleSoldier: 
 		
+		if (this->sprite.getPosition().y < 780)
+			this->sprite.move(0.f, gravitySpeed);
+
 		if (this->sprite.getPosition().x  > playerPosition.x)
 		{
 			this->sprite.setScale(1.3f, 1.3f);
@@ -146,6 +149,7 @@ void Enemy::Update(const float &dt, Vector2f playerPosition)
 			this->moveDirection.y = playerPosition.y - this->sprite.getPosition().y;
 		}
 		
+	
 		/*if (this->normalizedMoveDir.y > 0.3)
 			this->normalizedMoveDir.y = 0.3;
 		else if (this->normalizedMoveDir.y < -0.3)
@@ -186,6 +190,9 @@ void Enemy::Update(const float &dt, Vector2f playerPosition)
 
 		if (this->shootTimer < this->shootTimerMax)
 			this->shootTimer += 1.f *dt * this->dtMultiplier;
+
+		if (this->sprite.getPosition().y < 710)
+			this->sprite.move(0.f, gravitySpeed);
 
 		this->lookDirection.x = playerPosition.x - this->sprite.getPosition().x; //distanza tra enemy e player
 		this->lookDirection.y = playerPosition.y - this->sprite.getPosition().y;

@@ -3,7 +3,7 @@
 
 int main()
 {
-	RenderWindow window(VideoMode(1366, 768), "MemeSlug", Style::Default);
+	RenderWindow window(VideoMode::getDesktopMode(), "MemeSlug", Style::Default);
 
 	Clock clock;
 	float dt = 0.0f;
@@ -32,7 +32,7 @@ int main()
 
 
         game.Update(dt);
-		game.Draw();
+		game.Draw(dt);
 
 
 

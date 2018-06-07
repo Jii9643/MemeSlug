@@ -40,8 +40,8 @@ public:
 	inline bool getPiercingShot() const { return this->piercingShot; }
 	inline const Vector2f& getNormDir()const { return this->normDir; }
 	inline void move(float x, float y) { this->sprite.move(x, y);}
-
-
+	inline const Vector2f& getCurrentVelocity() {return this->currentVelocity; }
+	
 	//Funzioni 
 	void Reset();
 	void Draw(RenderTarget &target);

@@ -24,7 +24,7 @@ public:
 
 	//Funzioni 
 	void Update(const float &dt);
-	void Draw();
+	void Draw(const float dt);
 	void InitTextures();
 
 	//Funzioni Mappa
@@ -37,6 +37,8 @@ public:
 	void InitUI();
 	void DrawUI();
 
+	void initView();
+
 private:
 
 	RenderWindow * window;
@@ -45,6 +47,8 @@ private:
 	float keyTime;
 	float keyTimeMax;
 	bool paused;
+
+	View mainView;
 
 	//Score
 	Clock scoreTimer;
@@ -124,4 +128,7 @@ private:
 	Texture backgroundTexture;
 
 	
+
+	
+
 };

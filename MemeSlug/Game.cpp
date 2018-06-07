@@ -66,7 +66,12 @@ Game::~Game()
 
 }
 
-
+void Game::initView()
+{
+this->mainView.setSize(Vector2f(1280.f,720.f));
+this->mainView.setCenter(Vector2f(this->window->getSize().x,
+	this->window->getSize().y ));
+}
 
 void Game::InitTextures()
 {
@@ -194,8 +199,8 @@ void Game::InitMap()
 	{
 	}
 	this->backgroundSprite.setTexture(this->backgroundTexture);
-	this->backgroundSprite.setScale(3.5f, 3.5f);
-	this->backgroundSprite.setPosition(0.f, -50.f);
+	this->backgroundSprite.setScale(4.5f, 4.5f);
+	this->backgroundSprite.setPosition(-600.f, -50.f);
 	this->backgroundSprite.setColor(Color(255,255,255,150));
 }
 
@@ -353,6 +358,24 @@ void Game::Update(const float &dt)
 				{
 					//Update player.
 					this->players[i].Player::Update(this->window->getSize(), dt);
+
+					//Spostamento Mappa con player
+					if (Keyboard::isKeyPressed(Keyboard::Left) && this->players[i].getPosition().x > -100)
+					{
+						this->mainView.move(this->players[i].getCurrentVelocity().x * dt * this->dtMultiplier, 0.f);
+					}
+					else
+					{
+						this->mainView.move(0.f, 0.f);
+					}
+					if (Keyboard::isKeyPressed(Keyboard::Right) && this->players[i].getPosition().x < 1000)
+					{
+						this->mainView.move(this->players[i].getCurrentVelocity().x * dt * this->dtMultiplier, 0.f);
+					}
+					else
+					{
+						this->mainView.move(0.f, 0.f);
+					}
 
 					//Collisione con la mappa
 					for (size_t k = 0; k < this->blocks.size(); k++)
@@ -630,13 +653,19 @@ void Game::Update(const float &dt)
 	
 }
 
+
+
+
 //Disegnare a schermo players, boxes e bullets. 
-void Game::Draw()
+void Game::Draw(const float dt)
 {
 	
 	this->window->clear();
-	
-	window->draw(backgroundSprite);
+
+	this->window->setView(this->mainView);
+
+	this->window->draw(backgroundSprite);
+
 	//Draw players.
 	for (size_t i = 0; i < this->players.size(); i++)
 	{
@@ -661,8 +690,10 @@ void Game::Draw()
 		this->pickups[i].Draw(*this->window);
 	
 	}
-
 	
+	this->window->setView(this->window->getDefaultView());
+
+
 	this->DrawUI();
 	this->window->display();
 
@@ -671,9 +702,9 @@ void Game::Draw()
 
 void Game::CreateMap()
 {
-	for (float i = 0.f; i < 1500.f; i +=150.f)
+	for (float i = 0.f; i < 2700.f; i +=150.f)
 	{
-		this->blocks.add(Map(this->mapTextures, Vector2f(i, 680.f),
+		this->blocks.add(Map(this->mapTextures, Vector2f(i-600, 780.f),
 			Vector2f(0.5f, 0.5f), this->window->getSize(), 0));
 	}
 	

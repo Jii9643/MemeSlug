@@ -72,6 +72,10 @@ private:
 	int damageMax;
 	int playerFollowNr;
 
+
+	const float gravitySpeed = 10.0;
+
+
 	//Strategy
 	StrategyMove* strategy;
 };
