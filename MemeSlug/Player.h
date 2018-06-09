@@ -117,9 +117,11 @@ private:
 	int killUfo;
 	int points;
 	
-	//Attributi mappa. (temporanei)
+	//Attributi mappa
     const float ground = 600.0f;
 	const float gravitySpeed = 10.0;
+	const float LeftScreenBounds = -300.f;
+	const float RightScreenBounds = 1500.f;
 
 	//Timing riguardante il rate dei bullets.
 	float shootTimer;
@@ -131,7 +133,7 @@ private:
 	float jumpTimerMax;
 
 
-	//UI interface (ancora da implementare).
+	//UI interface 
 	int score;
 	int hp;
 	int hpMax;

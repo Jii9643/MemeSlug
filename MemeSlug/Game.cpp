@@ -360,7 +360,7 @@ void Game::Update(const float &dt)
 					this->players[i].Player::Update(this->window->getSize(), dt);
 
 					//Spostamento Mappa con player
-					if (Keyboard::isKeyPressed(Keyboard::Left) && this->players[i].getPosition().x > -100)
+					if (Keyboard::isKeyPressed(Keyboard::Left) && this->players[i].getPosition().x > this->LeftScreenBounds)
 					{
 						this->mainView.move(this->players[i].getCurrentVelocity().x * dt * this->dtMultiplier, 0.f);
 					}
@@ -368,7 +368,7 @@ void Game::Update(const float &dt)
 					{
 						this->mainView.move(0.f, 0.f);
 					}
-					if (Keyboard::isKeyPressed(Keyboard::Right) && this->players[i].getPosition().x < 1000)
+					if (Keyboard::isKeyPressed(Keyboard::Right) && this->players[i].getPosition().x < this->RightScreenBounds)
 					{
 						this->mainView.move(this->players[i].getCurrentVelocity().x * dt * this->dtMultiplier, 0.f);
 					}
@@ -432,13 +432,13 @@ void Game::Update(const float &dt)
 										if (dropChance > 8)
 										{
 											this->pickups.add(Pickup(this->pickupTextures,
-												Vector2f(this->enemies[j].getPosition().x, 670.f), Vector2f(0.3f, 0.3f),
+												Vector2f(this->enemies[j].getPosition().x, this->enemies[j].getPosition().y), Vector2f(0.3f, 0.3f),
 												0, 800.f));
 										}
 										else if (dropChance > 5)
 										{
 											this->pickups.add(Pickup(this->pickupTextures,
-												Vector2f(this->enemies[j].getPosition().x, 670.f), Vector2f(0.12f, 0.12f),
+												Vector2f(this->enemies[j].getPosition().x, this->enemies[j].getPosition().y), Vector2f(0.12f, 0.12f),
 												1, 800.f));
 
 										}
@@ -496,7 +496,7 @@ void Game::Update(const float &dt)
 						}
 
 						//Per cancellare i bullet dopo la size della window.
-						if (this->players[i].getBullet(k).getPosition().x > this->window->getSize().x)
+						if (this->players[i].getBullet(k).getPosition().x >this->players[i].getPosition().x + this->window->getSize().x)
 						{
 							this->players[i].removeBullet(k);
 							return;
@@ -702,7 +702,7 @@ void Game::Draw(const float dt)
 
 void Game::CreateMap()
 {
-	for (float i = 0.f; i < 2700.f; i +=150.f)
+	for (float i = 0.f; i < 27000.f; i +=150.f)
 	{
 		this->blocks.add(Map(this->mapTextures, Vector2f(i-600, 780.f),
 			Vector2f(0.5f, 0.5f), this->window->getSize(), 0));

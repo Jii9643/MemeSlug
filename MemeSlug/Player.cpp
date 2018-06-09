@@ -166,14 +166,15 @@ void Player::Movement(Vector2u windowBounds,const float &dt)
 
 	if (this->sprite.getPosition().y < 680)
 		this->sprite.move(0.f, gravitySpeed);
-	if (this->sprite.getPosition().x < -100) 
+	//Sinistra
+	if (this->sprite.getPosition().x < this->LeftScreenBounds) 
 	{
-		this->sprite.setPosition(-100.f, this->sprite.getPosition().y);
+		this->sprite.setPosition(this->LeftScreenBounds, this->sprite.getPosition().y);
 		this->currentVelocity.x = 0.f;
 	}
-	if (this->sprite.getPosition().x > +1000)
+	if (this->sprite.getPosition().x > this->RightScreenBounds)
 	{
-		this->sprite.setPosition(1000, this->sprite.getPosition().y);
+		this->sprite.setPosition(this->RightScreenBounds, this->sprite.getPosition().y);
 		this->currentVelocity.x = 0.f;
 	}
 

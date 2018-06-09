@@ -49,6 +49,9 @@ private:
 	bool paused;
 
 	View mainView;
+	const float LeftScreenBounds = -300.f;
+	const float RightScreenBounds = 50000.f;
+
 
 	//Score
 	Clock scoreTimer;
