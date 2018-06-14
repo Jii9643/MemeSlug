@@ -45,8 +45,7 @@ Game::Game(RenderWindow *window)
 	this->enemySpawnTimerMax = 200;
 	this->enemySpawnTimer = this->enemySpawnTimerMax;
 
-	//Init bosses
-	this->bossEncounter = false;
+
 
 	this->soldierKilled = 0;
 	this->ufoKilled = 0;
@@ -106,15 +105,6 @@ void Game::InitTextures()
 	temp.loadFromFile("Textures/Box1.png");
 	this->pickupTextures.add(Texture(temp));
 
-	//Bosses body
-	temp.loadFromFile("Textures/Box1.png");
-	this->bossBodyTextures.add(Texture(temp));
-
-	temp.loadFromFile("Textures/Box1.png");
-	this->bossGunTextures.add(Texture(temp));
-
-	temp.loadFromFile("Textures/Box1.png");
-	this->bossBulletTextures.add(Texture(temp));
 
 	temp.loadFromFile("Textures/GrassMap.png");
 	this->mapTextures.add(Texture(temp));
@@ -540,8 +530,7 @@ void Game::Update(const float &dt)
 					//Gestione collisione tra player e enemies.
 					for (size_t k = 0; k < this->players.size(); k++)
 					{
-
-						if (this->players[k].isAlive())
+					    if (this->players[k].isAlive())
 						{
 
 							if (this->players[k].getGlobalBounds().intersects(this->enemies[i].getGlobalBounds())
@@ -551,6 +540,16 @@ void Game::Update(const float &dt)
 
 								return;
 							}
+						       for (size_t t = 0; t < this->enemies[i].getBullets().size(); t++)
+									{
+										if (this->enemies[i].getBullets()[t].getGlobalBounds().intersects(this->players[k].getGlobalBounds())
+											&& !this->players[k].isDamagedCooldown())
+											{
+													this->players[k].takeDamage(this->enemies[i].getDamage());
+
+													return;
+											}
+									}
 						}
 					}
 
@@ -638,13 +637,11 @@ void Game::Update(const float &dt)
 					this->scoreMultiplier = 1;
 					this->multiplierAdder = 0;
 					this->scoreTime = 0;
-					this->bossEncounter = false;
 					this->enemySpawnTimerMax = 200.f; 
 					this->enemiesAlive = 0;
 					this->scoreTimer.restart();
 					this->enemies.clear();
 					this->pickups.clear();
-					this->bosses.clear();
 				}
 				this->enemySpawnTimer = 0;
 			}
@@ -704,7 +701,7 @@ void Game::CreateMap()
 {
 	for (float i = 0.f; i < 27000.f; i +=150.f)
 	{
-		this->blocks.add(Map(this->mapTextures, Vector2f(i-600, 780.f),
+		this->blocks.add(Map(this->mapTextures, Vector2f(i-800, 780.f),
 			Vector2f(0.5f, 0.5f), this->window->getSize(), 0));
 	}
 	
