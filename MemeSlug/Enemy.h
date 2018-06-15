@@ -23,12 +23,14 @@ public:
 	inline const int& getPlayerFollowNr() const { return this->playerFollowNr; }
 	inline const int& getType() const { return this->type; }
 	inline dArr<Bullet>& getBullets() { return this->bullets; }
+	void removeBullet(unsigned index);
 
 	//Funzioni 
 	void collisionUpdate(const float& dt,Vector2f playerPosition);
 	void takeDamage(int damage);
 	void Update(const float &dt, Vector2f playerPosition);
 	void Draw(RenderTarget &target);
+	void CheckMapCollision(const float &dt, Vector2f platformPosition, FloatRect platformBounds);
 
 	//Vettore distanza tra enemy e player (norma)
 
@@ -73,7 +75,7 @@ private:
 	int playerFollowNr;
 
 
-	const float gravitySpeed = 10.0;
+	float gravitySpeed = 10.0;
 
 
 	//Strategy

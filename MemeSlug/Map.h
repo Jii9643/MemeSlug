@@ -25,11 +25,10 @@ public:
 
 	inline FloatRect getGlobalBounds() const { return this->block.getGlobalBounds(); }
 	inline Vector2f getPosition() const { return this->block.getPosition(); }
+	inline const int& getType() const { return this->type; }
 	virtual ~Map();
 
 	//Funzioni 
-	void collisionUpdate(const float& dt, Vector2f entityPosition);
-	void Update(const float &dt, Vector2f entityPosition);
 	void Draw(RenderTarget &target);
 
 private:

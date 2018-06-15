@@ -150,14 +150,7 @@ void Enemy::Update(const float &dt, Vector2f playerPosition)
 		}
 		
 	
-		/*if (this->normalizedMoveDir.y > 0.3)
-			this->normalizedMoveDir.y = 0.3;
-		else if (this->normalizedMoveDir.y < -0.3)
-			this->normalizedMoveDir.y = -0.3;
 
-
-		if (this->normalizedMoveDir.x > -0.7)
-			this->normalizedMoveDir.x = -0.7;*/
 
 		if (this->sprite.getPosition().x   > playerPosition.x)
 		{
@@ -178,9 +171,7 @@ void Enemy::Update(const float &dt, Vector2f playerPosition)
 			this->normalizedMoveDir = normalize(-this->moveDirection, vectorLength(this->moveDirection));
 		}
 
-		/*this->sprite.move(
-			this->normalizedMoveDir.x * this->maxVelocity * dt * this->dtMultiplier, 
-			this->normalizedMoveDir.y * (this->maxVelocity + 15) * dt * this->dtMultiplier);*/
+		
 
 		break;
 	
@@ -263,6 +254,45 @@ void Enemy::Update(const float &dt, Vector2f playerPosition)
 	this->collisionUpdate(dt, playerPosition);
 }
 
+void Enemy::removeBullet(unsigned index)
+{
+	if (index < 0 || index > this->bullets.size())
+		throw ("OUT OF BOUNDS! PLAYER::GETBULLET!");
+
+	return this->bullets.remove(index);
+}
+
+void Enemy::CheckMapCollision(const float &dt, Vector2f platformPosition, FloatRect platformBounds)
+{
+	switch (this->type)
+	{
+	    case SimpleSoldier:
+			if (this->sprite.getGlobalBounds().intersects(platformBounds))
+			{
+				this->sprite.setPosition(this->sprite.getPosition().x, platformPosition.y - 30);
+			}
+			break;
+
+		case Ufo:
+			if (this->sprite.getGlobalBounds().intersects(platformBounds))
+			{
+				this->sprite.setPosition(this->sprite.getPosition().x, this->sprite.getPosition().y);
+			}
+			break;
+
+		case AssaultSoldier:
+			if (this->sprite.getGlobalBounds().intersects(platformBounds))
+			{
+				this->sprite.setPosition(this->sprite.getPosition().x, platformPosition.y - 100);
+			}
+			break;
+		
+	default:
+		break;
+	}
+	
+}
+
 void Enemy::Draw(RenderTarget &target)
 {
 	target.draw(this->sprite);
@@ -273,24 +303,3 @@ void Enemy::Draw(RenderTarget &target)
 		}
 	
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

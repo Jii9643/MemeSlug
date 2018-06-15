@@ -26,16 +26,8 @@ Map::~Map()
 {
 }
 
-void Map::collisionUpdate(const float& dt, Vector2f entityPosition)
-{
-
-}
 
 
-void Map::Update(const float &dt, Vector2f entityPosition)
-{
-
-}
 
 
 void Map::Draw(RenderTarget &target)

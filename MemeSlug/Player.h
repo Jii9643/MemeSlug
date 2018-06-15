@@ -41,12 +41,14 @@ public:
 	inline const Vector2f& getNormDir()const { return this->normDir; }
 	inline void move(float x, float y) { this->sprite.move(x, y);}
 	inline const Vector2f& getCurrentVelocity() {return this->currentVelocity; }
+	inline void setGravity() { this->sprite.move(0.f, gravitySpeed); }
 	
 	//Funzioni 
 	void Reset();
 	void Draw(RenderTarget &target);
 	void Update(Vector2u windowBounds, const float &dt);
 	void Movement(Vector2u windowBounds,const float &dt);
+	void CheckMapCollision(const float &dt, Vector2f platformPosition, FloatRect platformBounds);
 	void Combat(const float &dt);
 
 	//Funzioni Achievements
@@ -58,7 +60,6 @@ public:
 	void SetKillUfo();
 	void SetPoints(int pnts);
     
-	void blockCollision(Vector2f blockPosition, const float &dt);
 
 	FloatRect playerBounds;
 
@@ -119,9 +120,10 @@ private:
 	
 	//Attributi mappa
     const float ground = 600.0f;
-	const float gravitySpeed = 10.0;
+    float gravitySpeed = 10.0;
 	const float LeftScreenBounds = -300.f;
-	const float RightScreenBounds = 1500.f;
+	const float RightScreenBounds = 15000.f;
+
 
 	//Timing riguardante il rate dei bullets.
 	float shootTimer;

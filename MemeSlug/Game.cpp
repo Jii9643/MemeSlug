@@ -105,8 +105,10 @@ void Game::InitTextures()
 	temp.loadFromFile("Textures/Box1.png");
 	this->pickupTextures.add(Texture(temp));
 
-
+	//Mappa
 	temp.loadFromFile("Textures/GrassMap.png");
+	this->mapTextures.add(Texture(temp));
+	temp.loadFromFile("Textures/Platform.png");
 	this->mapTextures.add(Texture(temp));
 
 
@@ -186,12 +188,27 @@ void Game::InitMap()
 	
 	//Background
 	if (!backgroundTexture.loadFromFile("Textures/Background.png"))
-	{
-	}
+	{ }
 	this->backgroundSprite.setTexture(this->backgroundTexture);
 	this->backgroundSprite.setScale(4.5f, 4.5f);
 	this->backgroundSprite.setPosition(-600.f, -50.f);
-	this->backgroundSprite.setColor(Color(255,255,255,150));
+	this->backgroundSprite.setColor(Color(255, 255, 255, 150));
+	
+
+	if (!backgroundTexture1.loadFromFile("Textures/Background1.png"))
+	{ }
+	this->backgroundSprite1.setTexture(this->backgroundTexture);
+	this->backgroundSprite1.setScale(-4.5f, 4.5f);
+	this->backgroundSprite1.setPosition(8615.f, -50.f);
+	this->backgroundSprite1.setColor(Color(255, 255, 255, 150));
+
+	if (!backgroundTexture1.loadFromFile("Textures/Background2.png"))
+	{
+	}
+	this->backgroundSprite2.setTexture(this->backgroundTexture);
+	this->backgroundSprite2.setScale(4.5f, 4.5f);
+	this->backgroundSprite2.setPosition(8615.f, -50.f);
+	this->backgroundSprite2.setColor(Color(255, 255, 255, 150));
 }
 
 void Game:: UpdateUI()
@@ -317,10 +334,10 @@ void Game::Update(const float &dt)
 
 
 			//Enemies spawn
-			if (this->enemySpawnTimer >= this->enemySpawnTimerMax && this->enemiesAlive <=5)
+			if (this->enemySpawnTimer >= this->enemySpawnTimerMax && this->enemiesAlive <=60)
 			{
 				this->enemies.add(Enemy(this->enemyTextures, this->enemyBulletTextures,
-					this->window->getSize(), Vector2f(rand() % this->window->getSize().x, 670.f),
+					this->window->getSize(), Vector2f(rand() % this->window->getSize().x, 270),
 					Vector2f(-1.f, 0.f), Vector2f(1.3f, 1.3f),
 					0, 5, 3, 1, 0, move));
 				this->enemiesAlive++;
@@ -333,7 +350,7 @@ void Game::Update(const float &dt)
 				this->enemiesAlive++;
 
 				this->enemies.add(Enemy(this->enemyTextures, this->enemyBulletTextures,
-					this->window->getSize(), Vector2f(rand() % this->window->getSize().x, 600.f),
+					this->window->getSize(), Vector2f(rand() % this->window->getSize().x, rand() % this->window->getSize().y),
 					Vector2f(-1.f, 0.f), Vector2f(0.28f, 0.28f),
 					2, 5, 3, 1, 0, move));
 				this->enemiesAlive++;
@@ -349,36 +366,36 @@ void Game::Update(const float &dt)
 					//Update player.
 					this->players[i].Player::Update(this->window->getSize(), dt);
 
-					//Spostamento Mappa con player
-					if (Keyboard::isKeyPressed(Keyboard::Left) && this->players[i].getPosition().x > this->LeftScreenBounds)
+					//Collisione  del player con la mappa
+					for (size_t p = 0; p < this->blocks.size(); p++)
 					{
-						this->mainView.move(this->players[i].getCurrentVelocity().x * dt * this->dtMultiplier, 0.f);
-					}
-					else
-					{
-						this->mainView.move(0.f, 0.f);
-					}
-					if (Keyboard::isKeyPressed(Keyboard::Right) && this->players[i].getPosition().x < this->RightScreenBounds)
-					{
-						this->mainView.move(this->players[i].getCurrentVelocity().x * dt * this->dtMultiplier, 0.f);
-					}
-					else
-					{
-						this->mainView.move(0.f, 0.f);
-					}
-
-					//Collisione con la mappa
-					for (size_t k = 0; k < this->blocks.size(); k++)
-					{
-						/*if (this->players[i].getGlobalBounds().intersects(this->blocks[k].getGlobalBounds()))
+						if (this->blocks[p].getType() == 1)
 						{
-						
-						
-						}*/
-						//this->players[i].blockCollision(blocks[k].getPosition(), dt);
-					/*	std::cout << "\n" << blocks[k].getPosition().y;*/
+							this->players[i].CheckMapCollision(dt, this->blocks[p].getPosition(), this->blocks[p].getGlobalBounds());
+						}
 					}
 
+						//Spostamento Mappa con player
+						if (Keyboard::isKeyPressed(Keyboard::Left) && this->players[i].getPosition().x > this->LeftScreenBounds)
+						{
+							this->mainView.move(this->players[i].getCurrentVelocity().x * dt * this->dtMultiplier, 0.f);
+						}
+						else
+						{
+							this->mainView.move(0.f, 0.f);
+						}
+						if (Keyboard::isKeyPressed(Keyboard::Right) && this->players[i].getPosition().x < this->RightScreenBounds)
+						{
+							this->mainView.move(this->players[i].getCurrentVelocity().x * dt * this->dtMultiplier, 0.f);
+						}
+						else
+						{
+							this->mainView.move(0.f, 0.f);
+						}
+
+				
+
+				
 					//Update Bullets
 					for (size_t k = 0; k < this->players[i].getBulletsSize(); k++)
 					{
@@ -522,6 +539,16 @@ void Game::Update(const float &dt)
 					
 					this->enemies[i].Update(dt, this->players[this->enemies[i].getPlayerFollowNr()].getPosition());
 
+					//Collisione enemy con platform
+					for (size_t p = 0; p < this->blocks.size(); p++)
+					{
+					
+						if (this->blocks[p].getType() == 1)
+						{
+							this->enemies[i].CheckMapCollision(dt, this->blocks[p].getPosition(), this->blocks[p].getGlobalBounds());
+						}
+					}
+
 					//Update dei proiettili del nemico.
 					for (size_t k = 0; k < this->enemies[i].getBullets().size(); k++)
 					{
@@ -540,20 +567,32 @@ void Game::Update(const float &dt)
 
 								return;
 							}
+							   // Intersezione tra i proiettili del nemico e il player.
 						       for (size_t t = 0; t < this->enemies[i].getBullets().size(); t++)
 									{
 										if (this->enemies[i].getBullets()[t].getGlobalBounds().intersects(this->players[k].getGlobalBounds())
 											&& !this->players[k].isDamagedCooldown())
 											{
 													this->players[k].takeDamage(this->enemies[i].getDamage());
-
+													this->enemies[i].removeBullet(t);
 													return;
 											}
-									}
+										//Per cancellare i bullet dopo la size della window.
+										if (this->enemies[i].getBullets()[t].getPosition().x >this->enemies[i].getPosition().x + this->window->getSize().x)
+										{
+											this->enemies[i].removeBullet(k);
+											return;
+										}
+										if (this->enemies[i].getBullets()[t].getPosition().x <this->enemies[i].getPosition().x - this->window->getSize().x)
+										{
+											this->enemies[i].removeBullet(k);
+											return;
+										}
+							   }
 						}
 					}
 
-
+				
 					if (this->enemies[i].getPosition().x < 0 - this->enemies[i].getGlobalBounds().width)
 					{
 						this->enemies.remove(i);
@@ -662,6 +701,8 @@ void Game::Draw(const float dt)
 	this->window->setView(this->mainView);
 
 	this->window->draw(backgroundSprite);
+	this->window->draw(backgroundSprite1);
+	this->window->draw(backgroundSprite2);
 
 	//Draw players.
 	for (size_t i = 0; i < this->players.size(); i++)
@@ -699,10 +740,22 @@ void Game::Draw(const float dt)
 
 void Game::CreateMap()
 {
-	for (float i = 0.f; i < 27000.f; i +=150.f)
+	for (float i = 0.f; i < 270000.f; i +=150.f)
 	{
 		this->blocks.add(Map(this->mapTextures, Vector2f(i-800, 780.f),
 			Vector2f(0.5f, 0.5f), this->window->getSize(), 0));
 	}
-	
+
+	for (float j = 0; j < 270000; j += 1000 + rand()%3000)
+	{
+		this->blocks.add(Map(this->mapTextures, Vector2f(j , 550.f),
+			Vector2f(0.5f, 0.35f), this->window->getSize(), 1));
+	}
+
+	for (float j = 0; j < 270000; j += 100 + rand() % 3000)
+	{
+		this->blocks.add(Map(this->mapTextures, Vector2f(j, 150.f),
+			Vector2f(0.5f, 0.35f), this->window->getSize(), 1));
+	}
+
 }

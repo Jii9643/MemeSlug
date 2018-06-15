@@ -42,11 +42,11 @@ Player::Player(std::vector<Texture> &textures, int ks, int ku, int pnts)
 	this->points = pnts;
 
 	//Frequenza salto.
-	this->jumpTimerMax = 70;
+	this->jumpTimerMax = 83;
 	this->jumpTimer = this->jumpTimerMax;
 
 	//Velocità, accelerazione e attrito. 
-	this->maxVelocity = 15.0f;
+	this->maxVelocity = 8.0f;
 	this->acceleration = 1.0f;
 	this->stabilizerForce = 0.5f;
 
@@ -57,8 +57,7 @@ Player::Player(std::vector<Texture> &textures, int ks, int ku, int pnts)
 	this->playerNr = Player::players;
 	Player::players++;
 
-
-
+	
 }
 
 
@@ -116,6 +115,7 @@ void Player::Movement(Vector2u windowBounds,const float &dt)
 	//Update di normDir
 	this->normDir = normalize(this->currentVelocity, vectorLength(this->currentVelocity));
 	
+	std::cout << "\n" << sprite.getPosition().x;
 
 	Vector2f direction;
 
@@ -150,7 +150,7 @@ void Player::Movement(Vector2u windowBounds,const float &dt)
 	{
 
 	 this->direction.x = 0.0f;
-	 this->direction.y = -25.0f;
+	 this->direction.y = -28.0f;
 
 
     	if (this->currentVelocity.y > -this->maxVelocity && this->direction.y < 0)
@@ -162,10 +162,12 @@ void Player::Movement(Vector2u windowBounds,const float &dt)
 		this->jumpTimer = 0;
 	
 	}
-	
 
 	if (this->sprite.getPosition().y < 680)
-		this->sprite.move(0.f, gravitySpeed);
+	{
+		this->setGravity();
+	
+	}
 	//Sinistra
 	if (this->sprite.getPosition().x < this->LeftScreenBounds) 
 	{
@@ -215,35 +217,6 @@ void Player::Movement(Vector2u windowBounds,const float &dt)
 	//Update del player
 	this->playerCenter.x = this->sprite.getPosition().x + this->sprite.getGlobalBounds().width / 2;
 	this->playerCenter.y = this->sprite.getPosition().y + this->sprite.getGlobalBounds().height / 2;
-
-	//Check per la collisione con i bounds della finestra
-	
-	////Sinistra
-	//if (this->getPosition().x +200 <= 20)
-	//{
-		/*this->sprite.setPosition(200.f, this->sprite.getPosition().y);
-		this->currentVelocity.x = 0.f;*/
-	//}
-	////Sopra
-	//else if (this->getPosition().y <= 0)
-	//{
-	//	this->sprite.setPosition(this->sprite.getPosition().x, 0.f);
-	//	this->currentVelocity.y = 0.f;
-	//}
- //   //Destra
-	//else if (this->getPosition().x + this->getGlobalBounds().width -20 >= windowBounds.x)
-	//{
-	//	this->sprite.setPosition(windowBounds.x - this->getGlobalBounds().width, this->sprite.getPosition().y );
-	//	this->currentVelocity.x = 0.f;
-	//}
-	////Sotto
-	//else if (this->getPosition().y + this->getGlobalBounds().height -200 >= windowBounds.y)
-	//{
-	//	this->sprite.setPosition(this->sprite.getPosition().x , windowBounds.y - this->getGlobalBounds().height);
-	//	this->currentVelocity.y = 0.f;
-	//}
-	//
-
 }
 
 //Draw dei bullets.
@@ -331,6 +304,16 @@ void Player::Combat(const float &dt)
 	}
 }
 
+void Player::CheckMapCollision(const float &dt, Vector2f platformPosition, FloatRect platformBounds)
+{
+	
+	if (this->sprite.getGlobalBounds().intersects(platformBounds))
+	{
+		this->sprite.setPosition(this->sprite.getPosition().x, platformPosition.y - 140);
+	}
+	
+}
+
 Bullet& Player::getBullet(unsigned index)
 {
 	if (index < 0 || index > this->bullets.size())
@@ -364,8 +347,8 @@ void Player::Reset()
 
 void Player::Update(Vector2u windowBounds,const float &dt)
 {
-	
 
+	
     if (this->shootTimer < this->shootTimerMax)
 		this->shootTimer += 1.f * dt * this->dtMultiplier;
 
@@ -401,8 +384,7 @@ void Player::Detach(Observer *o)
 		this->observer.remove(o);
 	
 }
-	
-		
+			
 		
 void Player::SetKillSoldier() 
 {
@@ -424,11 +406,4 @@ void Player::SetPoints(int pnts)
 		Changed();
 }
 
-void Player::blockCollision(Vector2f blockPosition, const float &dt)
-{
-	//Sotto
-   if (this->sprite.getPosition().y <= blockPosition.y -120 )
-   {
-	   this->sprite.move(0.f, gravitySpeed);
-   }
-}
+

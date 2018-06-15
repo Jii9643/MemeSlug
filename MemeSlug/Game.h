@@ -50,7 +50,7 @@ private:
 
 	View mainView;
 	const float LeftScreenBounds = -300.f;
-	const float RightScreenBounds = 50000.f;
+	const float RightScreenBounds = 15000.f;
 
 
 	//Score
@@ -129,6 +129,10 @@ private:
 	//Background
 	Sprite backgroundSprite; 
 	Texture backgroundTexture;
+	Sprite backgroundSprite1;
+	Texture backgroundTexture1;
+	Sprite backgroundSprite2;
+	Texture backgroundTexture2;
 
 	
 
