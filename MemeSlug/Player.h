@@ -12,6 +12,7 @@ public:
 	float dtMultiplier;
 
 	Player(std::vector<Texture> &textures, int ks, int ku, int pnts);
+	explicit Player(Vector2f spawnPosition);
 	virtual ~Player();
 
 	//Bullets del player.
@@ -20,8 +21,9 @@ public:
 	inline const int getBulletsSize() const { return this->bullets.size(); }
 
 	//Funzioni inline
-	inline const float& getPositionX() const { return this->sprite.getPosition().x; }
+	inline const float getPositionX() const { return this->sprite.getPosition().x; }
 	inline const Vector2f& getPosition() const { return this->sprite.getPosition(); }
+	inline float getPlayerCenterX() { return this->playerCenter.x; }
 	int getDamage() const;
 	inline FloatRect getGlobalBounds() const { return this->sprite.getGlobalBounds(); }
 	inline const int& getHp() const { return this->hp; }

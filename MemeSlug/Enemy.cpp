@@ -287,8 +287,9 @@ void Enemy::CheckMapCollision(const float &dt, Vector2f platformPosition, FloatR
 			}
 			break;
 		
-	default:
-		break;
+		default:
+
+			break;
 	}
 	
 }

@@ -6,9 +6,6 @@ Game::Game(RenderWindow *window)
 
 {
 	this->InitTextures();
-
-	
-
 	
 	//Inizializzazione del gioco
 	this->window = window;
@@ -180,10 +177,7 @@ void Game:: InitUI()
 
 void Game::InitMap()
 {
-	RectangleShape temp;
-	temp.setSize(Vector2f(100000.f, 10.f));
-	temp.setFillColor(Color::White);
-	temp.setPosition(0.f, 750.f);
+
 
 	
 	//Background

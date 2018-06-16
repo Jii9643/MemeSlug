@@ -60,6 +60,10 @@ Player::Player(std::vector<Texture> &textures, int ks, int ku, int pnts)
 	
 }
 
+Player::Player(Vector2f spawnPosition)
+{
+	this->playerCenter.x = spawnPosition.x;
+}
 
 
 Player::~Player()
