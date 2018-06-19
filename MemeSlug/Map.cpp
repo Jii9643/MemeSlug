@@ -18,7 +18,7 @@ Map::Map(dArr<Texture> &textures, Vector2f position, Vector2f scale, Vector2u wi
 	);
 
 	this->windowBounds = windowBounds;
-
+	this->block.setColor(Color(255, 255, 255, 210));		
 }
 
 

@@ -12,7 +12,6 @@ public:
 	float dtMultiplier;
 
 	Player(std::vector<Texture> &textures, int ks, int ku, int pnts);
-	explicit Player(Vector2f spawnPosition);
 	virtual ~Player();
 
 	//Bullets del player.
@@ -21,9 +20,8 @@ public:
 	inline const int getBulletsSize() const { return this->bullets.size(); }
 
 	//Funzioni inline
-	inline const float getPositionX() const { return this->sprite.getPosition().x; }
+	inline const float& getPositionX() const { return this->sprite.getPosition().x; }
 	inline const Vector2f& getPosition() const { return this->sprite.getPosition(); }
-	inline float getPlayerCenterX() { return this->playerCenter.x; }
 	int getDamage() const;
 	inline FloatRect getGlobalBounds() const { return this->sprite.getGlobalBounds(); }
 	inline const int& getHp() const { return this->hp; }
@@ -44,7 +42,11 @@ public:
 	inline void move(float x, float y) { this->sprite.move(x, y);}
 	inline const Vector2f& getCurrentVelocity() {return this->currentVelocity; }
 	inline void setGravity() { this->sprite.move(0.f, gravitySpeed); }
+	inline void setMissileAmmo() { this->missileAmmo = 10; }
+	inline void setLaserAmmo() { this->laserAmmo = 5; }
+
 	
+
 	//Funzioni 
 	void Reset();
 	void Draw(RenderTarget &target);
@@ -52,6 +54,7 @@ public:
 	void Movement(Vector2u windowBounds,const float &dt);
 	void CheckMapCollision(const float &dt, Vector2f platformPosition, FloatRect platformBounds);
 	void Combat(const float &dt);
+	void CheckAmmo();
 
 	//Funzioni Achievements
 	virtual void Notify()const;
@@ -123,7 +126,7 @@ private:
 	//Attributi mappa
     const float ground = 600.0f;
     float gravitySpeed = 10.0;
-	const float LeftScreenBounds = -300.f;
+	const float LeftScreenBounds = 0.f;
 	const float RightScreenBounds = 15000.f;
 
 
@@ -132,6 +135,8 @@ private:
 	float shootTimerMax;
 	float damageTimer;
 	float damageTimerMax;
+	int missileAmmo;
+	int laserAmmo;
 
 	float jumpTimer; 
 	float jumpTimerMax;

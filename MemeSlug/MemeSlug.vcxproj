@@ -81,7 +81,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Achievement.cpp" />
-    <ClCompile Include="Boss.cpp" />
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -92,7 +91,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Achievement.h" />
-    <ClInclude Include="Boss.h" />
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="dArr.h" />
     <ClInclude Include="DisplayElement.h" />

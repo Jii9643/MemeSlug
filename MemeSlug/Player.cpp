@@ -53,6 +53,9 @@ Player::Player(std::vector<Texture> &textures, int ks, int ku, int pnts)
 	//Arma corrente.
 	this->currentWeapon = BULLET1;
 
+	this->missileAmmo = 10; 
+	this->laserAmmo = 5;
+
 	//Numero giocatori
 	this->playerNr = Player::players;
 	Player::players++;
@@ -60,10 +63,6 @@ Player::Player(std::vector<Texture> &textures, int ks, int ku, int pnts)
 	
 }
 
-Player::Player(Vector2f spawnPosition)
-{
-	this->playerCenter.x = spawnPosition.x;
-}
 
 
 Player::~Player()
@@ -119,8 +118,6 @@ void Player::Movement(Vector2u windowBounds,const float &dt)
 	//Update di normDir
 	this->normDir = normalize(this->currentVelocity, vectorLength(this->currentVelocity));
 	
-	std::cout << "\n" << sprite.getPosition().x;
-
 	Vector2f direction;
 
 	if (Keyboard::isKeyPressed(Keyboard::Left))
@@ -132,6 +129,7 @@ void Player::Movement(Vector2u windowBounds,const float &dt)
 
 		//Per fare il flip della sprite.
 		this->sprite.setScale(-0.119f, 0.119f);
+		this->sprite.setPosition(this->sprite.getPosition().x , this->sprite.getPosition().y);
 
 
 		if (this->currentVelocity.x > -this->maxVelocity && this->direction.x < 0)
@@ -144,6 +142,7 @@ void Player::Movement(Vector2u windowBounds,const float &dt)
 		this->direction.x = 1.0f;
 		this->direction.y = 0.0f;
 		this->sprite.setScale(0.119f, 0.119f);
+	
 
 		if (this->currentVelocity.x < this->maxVelocity && this->direction.x > 0)
 			this->currentVelocity.x += this->direction.x * this->acceleration * dt * this->dtMultiplier;
@@ -167,7 +166,7 @@ void Player::Movement(Vector2u windowBounds,const float &dt)
 	
 	}
 
-	if (this->sprite.getPosition().y < 680)
+	if (this->sprite.getPosition().y < 750)
 	{
 		this->setGravity();
 	
@@ -178,6 +177,7 @@ void Player::Movement(Vector2u windowBounds,const float &dt)
 		this->sprite.setPosition(this->LeftScreenBounds, this->sprite.getPosition().y);
 		this->currentVelocity.x = 0.f;
 	}
+	//Destra
 	if (this->sprite.getPosition().x > this->RightScreenBounds)
 	{
 		this->sprite.setPosition(this->RightScreenBounds, this->sprite.getPosition().y);
@@ -248,6 +248,7 @@ void Player::Combat(const float &dt)
 				this->bullets.add(Bullet(bulletTexture, Vector2f(this->playerCenter.x + 40, this->playerCenter.y ),
 					Vector2f(0.05f, 0.05f),
 					 Vector2f(1.0f, 0.0f), 1.0f, 30.0f, 2.0f));
+			
 			}
 			else if (this->currentWeapon == MISSILE)
 			{
@@ -255,13 +256,17 @@ void Player::Combat(const float &dt)
 				this->bullets.add(Bullet(missileTexture, Vector2f(this->playerCenter.x + 40 , this->playerCenter.y),
 					Vector2f(0.4f, 0.4f),
 					 Vector2f(2.0f, 0.0f), 0.08f, 30.0f, 2.0f));
+				this->CheckAmmo();
+			
 			}
 			else if (this->currentWeapon == LASER)
-
+			{
 				//crea il laser
-				this->bullets.add(Bullet(laserTexture, Vector2f(this->playerCenter.x + 40, this->playerCenter.y ),
+				this->bullets.add(Bullet(laserTexture, Vector2f(this->playerCenter.x + 40, this->playerCenter.y),
 					Vector2f(1.f, 0.4f),
 					Vector2f(20.0f, 0.0f), 0.8f, 40.0f, 2.0f));
+				this->CheckAmmo();
+			}
 		}
 		else 
 		{
@@ -271,7 +276,7 @@ void Player::Combat(const float &dt)
 				this->bullets.add(Bullet(bulletTexture, Vector2f(this->playerCenter.x - 140,this->playerCenter.y + 10),
 					Vector2f(-0.05f, 0.05f),
 					 Vector2f(-1.0f, 0.0f), 1.0f, 30.0f, 2.0f));
-				
+			
 			}
 			else if (this->currentWeapon == MISSILE)
 			{
@@ -279,13 +284,18 @@ void Player::Combat(const float &dt)
 				this->bullets.add(Bullet(missileTexture, Vector2f(this->playerCenter.x - 200, this->playerCenter.y + 20),
 					Vector2f(-0.4f, 0.4f),
 					 Vector2f(-2.0f, 0.0f), 0.08f, 30.0f, 2.0f));
+				this->CheckAmmo();
+			
 			}
 			else if (this->currentWeapon == LASER)
-
+			{
 				//crea il laser
 				this->bullets.add(Bullet(laserTexture, Vector2f(this->playerCenter.x - 140, this->playerCenter.y),
 					Vector2f(1.f, 0.4f),
 					Vector2f(-20.0f, 0.0f), 0.04f, 30.0f, 2.0f));
+				this->CheckAmmo();
+			}
+			
 		}
 		this->shootTimer = 0;
 	}
@@ -305,6 +315,33 @@ void Player::Combat(const float &dt)
 	else
 	{
 		this->sprite.setColor(Color::White);
+	}
+}
+
+void Player::CheckAmmo()
+{
+	if (this->currentWeapon == MISSILE)
+	{
+
+		this->missileAmmo--;
+		std::cout << "\n" << this->missileAmmo;
+
+		if (this->missileAmmo == 0)
+		{
+			this->disableMissile();
+		}
+
+	}
+	
+	if (this->currentWeapon == LASER)
+	{
+		this->laserAmmo--;
+		std::cout << "\n" << this->laserAmmo;
+
+		if (this->laserAmmo == 0)
+		{
+			this->disableLaser();
+		}
 	}
 }
 
@@ -336,7 +373,7 @@ void Player::removeBullet(unsigned index)
 
 void Player::Reset()
 {
-	this->hpMax = 5;
+	this->hpMax = 20;
 	this->hp = this->hpMax;
 	this->sprite.setPosition(Vector2f(300.f, 600.f));
 	this->bullets.clear();

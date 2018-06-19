@@ -21,10 +21,8 @@ Game::Game(RenderWindow *window)
 	this->multiplierTimerMax = 400.f;
 	this->multiplierTimer = this->multiplierTimerMax;
 	this->paused = true;
-
-	
-	
-	
+	this->endGame = false;
+		
 	
 	//Inizializzazione dei fonts (UI ancora da implementare)
 	this->font.loadFromFile("Fonts/Flighter_PERSONAL_USE_ONLY.ttf"); 
@@ -39,14 +37,14 @@ Game::Game(RenderWindow *window)
 	
 		
 	this->enemiesAlive = 0;
-	this->enemySpawnTimerMax = 200;
+	this->enemySpawnTimerMax = 300;
 	this->enemySpawnTimer = this->enemySpawnTimerMax;
 
 
 
 	this->soldierKilled = 0;
 	this->ufoKilled = 0;
-	this->AchievementTimerMax = 3; 
+	this->AchievementTimerMax = 30000; 
 	this->AchievementTimer = 0;
 
 
@@ -108,8 +106,10 @@ void Game::InitTextures()
 	temp.loadFromFile("Textures/Platform.png");
 	this->mapTextures.add(Texture(temp));
 
-
-
+	this->EndTexture.loadFromFile("Textures/Sign.png");
+	this->EndSprite.setTexture(EndTexture);
+	this->EndSprite.setPosition(12600.f, 580.f);
+	this->EndSprite.setScale(-1.5f, 1.5f);
 
 }
 
@@ -134,6 +134,15 @@ void Game:: InitUI()
 		std::string("YOU DIED!"));
 	this->gameOverText.setPosition(this->window->getSize().x / 2 , this->window->getSize().y / 2 );
 
+	//End Game
+	this->endGameText.setFont(this->font1);
+	this->endGameText.setFillColor(Color::Green);
+	this->endGameText.setCharacterSize(60);
+	this->endGameText.setString(
+		std::string("YOU WON!"));
+	this->endGameText.setPosition(this->window->getSize().x / 2, this->window->getSize().y / 2);
+
+
 	//Score
 	this->scoreText.setFont(this->font1);
 	this->scoreText.setFillColor(Color(200, 200, 200, 150));
@@ -154,24 +163,24 @@ void Game:: InitUI()
 
 	//Achievement per aver ucciso i soldati 
 	this->killSoldierText.setFont(this->font1);
-	this->killSoldierText.setFillColor(Color::Green);
+	this->killSoldierText.setFillColor(Color(220, 110, 24, 255));
 	this->killSoldierText.setCharacterSize(20);
 	this->killSoldierText.setString("");
-	this->killSoldierText.setPosition(1000.f, 20.f);
+	this->killSoldierText.setPosition(1500.f, 20.f);
 	
 	//Achievement per aver ucciso gli ufo
 	this->killUfoText.setFont(this->font1);
-	this->killUfoText.setFillColor(Color::Green);
+	this->killUfoText.setFillColor(Color(220, 110, 24, 255));
 	this->killUfoText.setCharacterSize(20);
 	this->killUfoText.setString("");
-	this->killUfoText.setPosition(1000.f, 20.f);
+	this->killUfoText.setPosition(1500.f, 20.f);
 	
 	//Achievement per lo score
 	this->pointsText.setFont(this->font1);
-	this->pointsText.setFillColor(Color::Green);
+	this->pointsText.setFillColor(Color(220, 110, 24,255));
 	this->pointsText.setCharacterSize(20);
 	this->pointsText.setString("");
-	this->pointsText.setPosition(1000.f, 40.f);
+	this->pointsText.setPosition(1500.f, 40.f);
 
 }
 
@@ -219,6 +228,10 @@ void Game::DrawUI()
 		this->window->draw(this->gameOverText);
 	}
 
+	if (this->endGame == true)
+	{
+		this->window->draw(this->endGameText);
+	}
 	
 	//Score 
 	this->window->draw(this->scoreText);
@@ -328,23 +341,23 @@ void Game::Update(const float &dt)
 
 
 			//Enemies spawn
-			if (this->enemySpawnTimer >= this->enemySpawnTimerMax && this->enemiesAlive <=60)
+			if (this->enemySpawnTimer >= this->enemySpawnTimerMax && this->enemiesAlive <=15)
 			{
 				this->enemies.add(Enemy(this->enemyTextures, this->enemyBulletTextures,
-					this->window->getSize(), Vector2f(rand() % this->window->getSize().x, 270),
+					this->window->getSize(), Vector2f(this->players[0].getPosition().x + rand() % 800, rand() % 600),
 					Vector2f(-1.f, 0.f), Vector2f(1.3f, 1.3f),
 					0, 5, 3, 1, 0, move));
 				this->enemiesAlive++;
 				
 
 				this->enemies.add(Enemy(this->enemyTextures, this->enemyBulletTextures,
-					this->window->getSize(), Vector2f(rand() % this->window->getSize().x + 800, rand() % this->window->getSize().y - 500),
-					Vector2f(-1.f, 0.f), Vector2f(0.15f, 0.15f),
+					this->window->getSize(), Vector2f(this->players[0].getPosition().x + rand() % 800, rand() % 200),
+					Vector2f(-1.f, 0.f), Vector2f(0.15f, 0.20f),
 					1, 5, 3, 1, 0, move));
 				this->enemiesAlive++;
 
 				this->enemies.add(Enemy(this->enemyTextures, this->enemyBulletTextures,
-					this->window->getSize(), Vector2f(rand() % this->window->getSize().x, rand() % this->window->getSize().y),
+					this->window->getSize(), Vector2f(this->players[0].getPosition().x + rand() % 800, rand () % 600),
 					Vector2f(-1.f, 0.f), Vector2f(0.28f, 0.28f),
 					2, 5, 3, 1, 0, move));
 				this->enemiesAlive++;
@@ -359,6 +372,13 @@ void Game::Update(const float &dt)
 				{
 					//Update player.
 					this->players[i].Player::Update(this->window->getSize(), dt);
+					
+					if (this->players[i].getPosition().x >= 12500.f)
+					{
+				
+						this->endGame = true;
+						this->DrawUI();
+					}
 
 					//Collisione  del player con la mappa
 					for (size_t p = 0; p < this->blocks.size(); p++)
@@ -370,6 +390,8 @@ void Game::Update(const float &dt)
 					}
 
 						//Spostamento Mappa con player
+					if (this->endGame == false)
+					{
 						if (Keyboard::isKeyPressed(Keyboard::Left) && this->players[i].getPosition().x > this->LeftScreenBounds)
 						{
 							this->mainView.move(this->players[i].getCurrentVelocity().x * dt * this->dtMultiplier, 0.f);
@@ -386,7 +408,17 @@ void Game::Update(const float &dt)
 						{
 							this->mainView.move(0.f, 0.f);
 						}
-
+					}
+					else
+					{
+						this->mainView.move(0.f, 0.f);
+						this->players[i].move(4.f, 0.f);
+						if (Keyboard::isKeyPressed(Keyboard::Left) || (Keyboard::isKeyPressed(Keyboard::Right)))
+						{
+							this->mainView.move(0.f, 0.f);
+							this->players[i].move(4.f, 0.f);
+						}
+					}
 				
 
 				
@@ -587,7 +619,7 @@ void Game::Update(const float &dt)
 					}
 
 				
-					if (this->enemies[i].getPosition().x < 0 - this->enemies[i].getGlobalBounds().width)
+					if (this->enemies[i].getPosition().x < this->players[0].getPosition().x - 1000)
 					{
 						this->enemies.remove(i);
 						return;
@@ -610,14 +642,16 @@ void Game::Update(const float &dt)
 							case 0:
 								this->players[k].disablePiercingShot();
 								this->players[k].enableMissile();
-
+								this->players[k].setMissileAmmo();
+								
 								break;
 
 							case 1:
 
 								this->players[k].enablePiercingShot();
 								this->players[k].enableLaser();
-
+								this->players[k].setLaserAmmo();
+								
 								break;
 
 							default:
@@ -666,6 +700,7 @@ void Game::Update(const float &dt)
 					}
 
 					this->runGame = true;
+					this->endGame = false;
 					this->score = 0;
 					this->scoreMultiplier = 1;
 					this->multiplierAdder = 0;
@@ -697,6 +732,7 @@ void Game::Draw(const float dt)
 	this->window->draw(backgroundSprite);
 	this->window->draw(backgroundSprite1);
 	this->window->draw(backgroundSprite2);
+	this->window->draw(EndSprite);
 
 	//Draw players.
 	for (size_t i = 0; i < this->players.size(); i++)
@@ -724,7 +760,7 @@ void Game::Draw(const float dt)
 	}
 	
 	this->window->setView(this->window->getDefaultView());
-
+	
 
 	this->DrawUI();
 	this->window->display();
@@ -736,7 +772,7 @@ void Game::CreateMap()
 {
 	for (float i = 0.f; i < 270000.f; i +=150.f)
 	{
-		this->blocks.add(Map(this->mapTextures, Vector2f(i-800, 780.f),
+		this->blocks.add(Map(this->mapTextures, Vector2f(i-800, 850.f),
 			Vector2f(0.5f, 0.5f), this->window->getSize(), 0));
 	}
 

@@ -8,8 +8,7 @@ public:
 	~Achievements()override;
 	virtual void Modify(int ks, int ku, int ptns) override;
 	void Display();
-	/*void SetAchievements();
-	void LoadAch();*/
+
 
 
 
@@ -21,7 +20,5 @@ protected:
 	int points;
 	bool Ach1, Ach2, Ach3;
 	Text text;
-	void Addstring2(std::string m);
-
 };
 

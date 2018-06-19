@@ -1,7 +1,6 @@
 #pragma once
 #include "Player.h"
 #include "Enemy.h"
-#include"Boss.h"
 #include "Achievement.h"
 #include "Map.h"
 
@@ -32,7 +31,7 @@ public:
 	void CreateMap();
 
 
-	//Funzioni per l'interfaccia utente (ancora non implementate)
+	//Funzioni per l'interfaccia utente 
 	void UpdateUI();
 	void InitUI();
 	void DrawUI();
@@ -47,6 +46,7 @@ private:
 	float keyTime;
 	float keyTimeMax;
 	bool paused;
+	bool endGame;
 
 	View mainView;
 	const float LeftScreenBounds = -300.f;
@@ -70,6 +70,7 @@ private:
 	Text gameOverText;
 	Text scoreText;
 	Text controlsText;
+	Text endGameText;
 
 	//Achievemnts texts
 	Text killSoldierText;
@@ -84,9 +85,7 @@ private:
 	//Players
 	dArr<Player> players;
 
-	//Bosses
-	bool bossEncounter;
-	dArr<Boss> bosses;
+	
 
 	//Pickups
 	dArr<Pickup> pickups;
@@ -118,11 +117,7 @@ private:
 	//Pickup textures
 	dArr<Texture> pickupTextures;
 
-	//Boss textures
-	dArr<Texture> bossBodyTextures;
-	dArr<Texture> bossGunTextures;
-	dArr<Texture> bossBulletTextures;
-
+	
 	//Map Textures
 	dArr <Texture> mapTextures;
 
@@ -133,6 +128,8 @@ private:
 	Texture backgroundTexture1;
 	Sprite backgroundSprite2;
 	Texture backgroundTexture2;
+	Sprite EndSprite;
+	Texture EndTexture;
 
 	
 

@@ -45,7 +45,7 @@ Enemy::Enemy(dArr<Texture> &textures, dArr<Texture> &bulletTextures, Vector2u wi
 	    break;
 	
 	case Ufo: 
-		this->maxVelocity = 5.f;
+		this->maxVelocity = 3.f;
 	    break;
 
 	case AssaultSoldier: 
@@ -115,7 +115,7 @@ void Enemy::Update(const float &dt, Vector2f playerPosition)
 	{
 	case SimpleSoldier: 
 		
-		if (this->sprite.getPosition().y < 780)
+		if (this->sprite.getPosition().y < 850)
 			this->sprite.move(0.f, gravitySpeed);
 
 		if (this->sprite.getPosition().x  > playerPosition.x)
@@ -182,7 +182,7 @@ void Enemy::Update(const float &dt, Vector2f playerPosition)
 		if (this->shootTimer < this->shootTimerMax)
 			this->shootTimer += 1.f *dt * this->dtMultiplier;
 
-		if (this->sprite.getPosition().y < 710)
+		if (this->sprite.getPosition().y < 780)
 			this->sprite.move(0.f, gravitySpeed);
 
 		this->lookDirection.x = playerPosition.x - this->sprite.getPosition().x; //distanza tra enemy e player
@@ -216,24 +216,24 @@ void Enemy::Update(const float &dt, Vector2f playerPosition)
 		//Sparo
 		if (this->shootTimer >= this->shootTimerMax)
 		{
-			if (this->sprite.getPosition().x > playerPosition.x)
+			if (this->sprite.getPosition().x > playerPosition.x && this->sprite.getPosition().y - 30 <= playerPosition.y)
 			{
 				this->bullets.add(Bullet(&(*this->bulletTextures)[Regular], Vector2f(this->sprite.getPosition().x - 20, this->sprite.getPosition().y + 35),
 					Vector2f(-0.15f, 0.15f), Vector2f(-1.f, 0.f),
 					2.f, 5.f, 0.5f));
 			}
-			else if (this->sprite.getPosition().x  < playerPosition.x)
+			else if (this->sprite.getPosition().x  < playerPosition.x && this->sprite.getPosition().y - 30 <= playerPosition.y)
 			{
 				this->bullets.add(Bullet(&(*this->bulletTextures)[Regular], Vector2f(this->sprite.getPosition().x - 20, this->sprite.getPosition().y + 35),
 					Vector2f(0.15f, 0.15f), Vector2f(1.f, 0.f),
-					8.f, 13.f, 0.5f));
+					15.f, 20.f, 0.5f));
 			}
 			this->shootTimer = 0.f;
 		}
 
 		break;
 
-	default: 
+		default: 
 		
 		break;
 	}
@@ -287,9 +287,8 @@ void Enemy::CheckMapCollision(const float &dt, Vector2f platformPosition, FloatR
 			}
 			break;
 		
-		default:
-
-			break;
+	default:
+		break;
 	}
 	
 }
