@@ -22,6 +22,7 @@ Game::Game(RenderWindow *window)
 	this->multiplierTimer = this->multiplierTimerMax;
 	this->paused = true;
 	this->endGame = false;
+	this->bossIsAlive = false;
 		
 	
 	//Inizializzazione dei fonts (UI ancora da implementare)
@@ -89,9 +90,13 @@ void Game::InitTextures()
 	this->enemyTextures.add(Texture(temp));
 	temp.loadFromFile("Textures/soldierMSL.png");
 	this->enemyTextures.add(Texture(temp));
+	temp.loadFromFile("Textures/Boss.png");
+	this->enemyTextures.add(Texture(temp));
 
 	//Proiettili dei nemici
 	temp.loadFromFile("Textures/eBullet.png");
+	this->enemyBulletTextures.add(Texture(temp));
+	temp.loadFromFile("Textures/BossBullet.png");
 	this->enemyBulletTextures.add(Texture(temp));
 
 	//Pickups
@@ -353,17 +358,28 @@ void Game::Update(const float &dt)
 				this->enemies.add(Enemy(this->enemyTextures, this->enemyBulletTextures,
 					this->window->getSize(), Vector2f(this->players[0].getPosition().x + rand() % 800, rand() % 200),
 					Vector2f(-1.f, 0.f), Vector2f(0.15f, 0.20f),
-					1, 5, 3, 1, 0, move));
+					1, 5, 3, 3, 0, move));
 				this->enemiesAlive++;
 
 				this->enemies.add(Enemy(this->enemyTextures, this->enemyBulletTextures,
 					this->window->getSize(), Vector2f(this->players[0].getPosition().x + rand() % 800, rand () % 600),
 					Vector2f(-1.f, 0.f), Vector2f(0.28f, 0.28f),
-					2, 5, 3, 1, 0, move));
+					2, 5, 3, 2, 0, move));
 				this->enemiesAlive++;
 
+				
 				this->enemySpawnTimer = 0;
 				
+			}
+
+			//Final Boss
+			if (this->players[0].getPosition().x >= 10000 && this->bossIsAlive == false)
+			{
+				this->enemies.add(Enemy(this->enemyTextures, this->enemyBulletTextures,
+					this->window->getSize(), Vector2f(12000, 580),
+					Vector2f(-1.f, 0.f), Vector2f(0.88f, 0.88f),
+					3, 50, 5, 5, 0, move));
+				this->bossIsAlive = true;
 			}
 
 			for (size_t i = 0; i < players.size(); i++)
@@ -512,6 +528,10 @@ void Game::Update(const float &dt)
 										DrawUI();
 
 										break; 
+
+									case 3:
+										this->enemies.remove(j);
+										this->enemiesAlive--;
 									
 									default: 
 										break; 
@@ -710,6 +730,7 @@ void Game::Update(const float &dt)
 					this->scoreTimer.restart();
 					this->enemies.clear();
 					this->pickups.clear();
+					this->mainView.setCenter(players[0].getPosition().x + 200, players[0].getPosition().y - 83);
 				}
 				this->enemySpawnTimer = 0;
 			}

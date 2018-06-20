@@ -46,7 +46,7 @@ Player::Player(std::vector<Texture> &textures, int ks, int ku, int pnts)
 	this->jumpTimer = this->jumpTimerMax;
 
 	//Velocità, accelerazione e attrito. 
-	this->maxVelocity = 8.0f;
+	this->maxVelocity = 6.0f;
 	this->acceleration = 1.0f;
 	this->stabilizerForce = 0.5f;
 
@@ -245,15 +245,15 @@ void Player::Combat(const float &dt)
 			if (this->currentWeapon == BULLET1)
 			{
 				//crea i proiettili
-				this->bullets.add(Bullet(bulletTexture, Vector2f(this->playerCenter.x + 40, this->playerCenter.y ),
-					Vector2f(0.05f, 0.05f),
+				this->bullets.add(Bullet(bulletTexture, Vector2f(this->playerCenter.x + 40, this->playerCenter.y + 20),
+					Vector2f(0.45f, 0.35f),
 					 Vector2f(1.0f, 0.0f), 1.0f, 30.0f, 2.0f));
 			
 			}
 			else if (this->currentWeapon == MISSILE)
 			{
 				//crea i missili
-				this->bullets.add(Bullet(missileTexture, Vector2f(this->playerCenter.x + 40 , this->playerCenter.y),
+				this->bullets.add(Bullet(missileTexture, Vector2f(this->playerCenter.x + 40 , this->playerCenter.y + 10),
 					Vector2f(0.4f, 0.4f),
 					 Vector2f(2.0f, 0.0f), 0.08f, 30.0f, 2.0f));
 				this->CheckAmmo();
@@ -273,8 +273,8 @@ void Player::Combat(const float &dt)
 			if (this->currentWeapon == BULLET1)
 			{
 				//crea i proiettili
-				this->bullets.add(Bullet(bulletTexture, Vector2f(this->playerCenter.x - 140,this->playerCenter.y + 10),
-					Vector2f(-0.05f, 0.05f),
+				this->bullets.add(Bullet(bulletTexture, Vector2f(this->playerCenter.x - 140,this->playerCenter.y + 20),
+					Vector2f(-0.45f, 0.35f),
 					 Vector2f(-1.0f, 0.0f), 1.0f, 30.0f, 2.0f));
 			
 			}

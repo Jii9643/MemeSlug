@@ -96,6 +96,7 @@ private:
 	float enemySpawnTimer;
 	float enemySpawnTimerMax;
 	int enemiesAlive;
+	bool bossIsAlive;
 
 	//Achievements
      std::vector <Achievements> achievements;

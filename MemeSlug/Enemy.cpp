@@ -1,9 +1,8 @@
 #include "Enemy.h"
 
 
-enum eTypes { SimpleSoldier = 0, Ufo, AssaultSoldier };
-enum bulletTypes { Regular = 0, Missile1
-};
+enum eTypes { SimpleSoldier = 0, Ufo, AssaultSoldier, Boss };
+enum bulletTypes { Regular = 0, BossBullet};
 
 Enemy::Enemy(dArr<Texture> &textures, dArr<Texture> &bulletTextures, Vector2u windowBounds, Vector2f position, Vector2f moveDirection,
 	 Vector2f scale, int type, int hpMax, int damageMax, int damageMin, int playerFollowNr, StrategyMove* sm)
@@ -54,14 +53,16 @@ Enemy::Enemy(dArr<Texture> &textures, dArr<Texture> &bulletTextures, Vector2u wi
 		this->shootTimer = 0.f;
 		break;
 
+	case Boss:
+		this->maxVelocity = 0.5f;
+		this->shootTimerMax = 20.f;
+		this->shootTimer = 0.f;
+		break;
+
 	default: 
 		break;
 	}
 	
-
-
-
-
 	this->hpMax = hpMax; 
 	this->hp = this->hpMax;
 
@@ -149,9 +150,6 @@ void Enemy::Update(const float &dt, Vector2f playerPosition)
 			this->moveDirection.y = playerPosition.y - this->sprite.getPosition().y;
 		}
 		
-	
-
-
 		if (this->sprite.getPosition().x   > playerPosition.x)
 		{
 			strategy = new StrategyL(
@@ -211,8 +209,6 @@ void Enemy::Update(const float &dt, Vector2f playerPosition)
 			this->normalizedMoveDir = normalize(-this->moveDirection, vectorLength(this->moveDirection));
 		}
 
-
-
 		//Sparo
 		if (this->shootTimer >= this->shootTimerMax)
 		{
@@ -233,6 +229,70 @@ void Enemy::Update(const float &dt, Vector2f playerPosition)
 
 		break;
 
+	case Boss:
+
+		this->shootTimerMax = 60.f;
+
+		if (this->shootTimer < this->shootTimerMax)
+			this->shootTimer += 1.f *dt * this->dtMultiplier;
+
+		if (this->sprite.getPosition().y < 700)
+			this->sprite.move(0.f, gravitySpeed);
+
+		this->lookDirection.x = playerPosition.x - this->sprite.getPosition().x; //distanza tra enemy e player
+		this->lookDirection.y = playerPosition.y - this->sprite.getPosition().y;
+
+		this->normalizedLookDir = normalize(this->lookDirection, vectorLength(this->lookDirection));
+
+		if (this->sprite.getPosition().x  > playerPosition.x)
+		{
+			this->sprite.setScale(0.68f, 0.68f);
+			strategy = new StrategyL(
+				-this->moveDirection.x *this->maxVelocity*dt*this->dtMultiplier,
+				this->moveDirection.y *this->maxVelocity*dt*this->dtMultiplier);
+			this->sprite.move(strategy->StrategyEnemy());
+			delete strategy;
+			this->normalizedMoveDir = normalize(this->moveDirection, vectorLength(this->moveDirection));
+		}
+		else if (this->sprite.getPosition().x < playerPosition.x)
+		{
+			this->sprite.setScale(-0.68f, 0.68f);
+			strategy = new StrategyR(
+				-this->moveDirection.x *this->maxVelocity*dt*this->dtMultiplier,
+				this->moveDirection.y *this->maxVelocity*dt*this->dtMultiplier);
+			this->sprite.move(strategy->StrategyEnemy());
+			delete strategy;
+			this->normalizedMoveDir = normalize(-this->moveDirection, vectorLength(this->moveDirection));
+		}
+
+
+
+		//Sparo
+		if (this->shootTimer >= this->shootTimerMax)
+		{
+			if (this->sprite.getPosition().x > playerPosition.x && this->sprite.getPosition().y - 30 <= playerPosition.y)
+			{
+				this->bullets.add(Bullet(&(*this->bulletTextures)[BossBullet], Vector2f(this->sprite.getPosition().x - 20, this->sprite.getPosition().y + 35),
+					Vector2f(-0.05f, 0.05f), Vector2f(-1.f, 0.f),
+					1.f, 2.f, 0.5f));
+				this->bullets.add(Bullet(&(*this->bulletTextures)[BossBullet], Vector2f(this->sprite.getPosition().x - 20, this->sprite.getPosition().y + 105),
+					Vector2f(-0.05f, 0.05f), Vector2f(-1.f, 0.f),
+					1.f, 2.f, 0.5f));
+			}
+			else if (this->sprite.getPosition().x  < playerPosition.x && this->sprite.getPosition().y - 30 <= playerPosition.y)
+			{
+				this->bullets.add(Bullet(&(*this->bulletTextures)[BossBullet], Vector2f(this->sprite.getPosition().x - 20, this->sprite.getPosition().y + 35),
+					Vector2f(0.05f, 0.05f), Vector2f(1.f, 0.f),
+					5.f, 15.f, 0.5f));
+				this->bullets.add(Bullet(&(*this->bulletTextures)[BossBullet], Vector2f(this->sprite.getPosition().x - 20, this->sprite.getPosition().y + 105),
+					Vector2f(0.05f, 0.05f), Vector2f(1.f, 0.f),
+					5.f, 15.f, 0.5f));
+			}
+			this->shootTimer = 0.f;
+		}
+
+		break;
+
 		default: 
 		
 		break;
@@ -244,8 +304,11 @@ void Enemy::Update(const float &dt, Vector2f playerPosition)
 
 		this->sprite.setColor(Color::Red);
 
-		this->sprite.move(20.0f* -this->normalizedMoveDir.x *  this->damageTimer * dt*dtMultiplier ,
-			              20.0f* -this->normalizedMoveDir.y *  this->damageTimer * dt*dtMultiplier);
+		if (this->getType() != Boss)
+		{
+			this->sprite.move(20.0f* -this->normalizedMoveDir.x *  this->damageTimer * dt*dtMultiplier,
+				20.0f* -this->normalizedMoveDir.y *  this->damageTimer * dt*dtMultiplier);
+		}
 	}
 	else
 		this->sprite.setColor(Color::White);
@@ -286,6 +349,8 @@ void Enemy::CheckMapCollision(const float &dt, Vector2f platformPosition, FloatR
 				this->sprite.setPosition(this->sprite.getPosition().x, platformPosition.y - 100);
 			}
 			break;
+
+	
 		
 	default:
 		break;
